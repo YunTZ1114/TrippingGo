@@ -1,15 +1,12 @@
-import { Button } from "@mui/material";
-import AddOutlined from "@mui/icons-material/AddOutlined";
+import { Button } from "antd";
+import Link from "next/link";
 
-const Home = () => {
+export default function Home() {
   return (
     <div>
-      <Button variant="contained" size="medium" startIcon={<AddOutlined />}>
-        create trip
-      </Button>
-      home
+      <Link href="/login">
+        <Button type="primary">login</Button>
+      </Link>
     </div>
   );
-};
-
-export default Home;
+}
