@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import jwt, { JwtPayload } from 'jsonwebtoken';
-import { JWT_SECRET } from 'src/utils/config';
+import * as jwt from 'jsonwebtoken';
+import { JwtPayload } from 'jsonwebtoken';
+import { JWT_SECRET } from 'src/config';
 
 @Injectable()
 export class TokenService {

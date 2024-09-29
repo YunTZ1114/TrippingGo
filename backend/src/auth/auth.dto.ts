@@ -12,7 +12,7 @@ export class SignUpDto {
   name: string;
 
   @IsNotEmpty()
-  country: string;
+  countryId: number;
 
   @IsNotEmpty()
   gender: string;
