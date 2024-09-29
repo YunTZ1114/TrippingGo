@@ -1,6 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { DatabaseService } from 'src/database/database.service';
+import { PEPPER } from 'src/config';
 import { EncryptionService } from 'src/utils/encrypt';
 
 @Injectable()
@@ -9,7 +10,7 @@ export class AuthService {
     private readonly databaseService: DatabaseService,
     private readonly encryptionService: EncryptionService,
   ) {}
-  private readonly pepper = process.env.PEPPER;
+  private readonly pepper = PEPPER;
 
   async hashPassword(password: string): Promise<string> {
     const salt = await bcrypt.genSalt(10);
@@ -35,7 +36,7 @@ export class AuthService {
     return user;
   }
 
-  async signUp(email: string, password: string, name: string, country: string, gender: string) {
+  async signUp(email: string, password: string, name: string, countryId: number, gender: string) {
     const existingUser = await this.databaseService.user.findUnique({ where: { email } });
     if (existingUser) {
       throw new BadRequestException('Email already in use');
@@ -48,7 +49,7 @@ export class AuthService {
         email,
         password: hashedPassword,
         name,
-        country,
+        countryId,
         gender,
       },
     });

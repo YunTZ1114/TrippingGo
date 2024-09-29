@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import * as nodemailer from 'nodemailer';
+import { MAIL_ADDRESS, MAIL_PASS, TEST_MAIL } from 'src/config';
 import { DatabaseService } from 'src/database/database.service';
 
 @Injectable()
@@ -10,8 +11,8 @@ export class MailService {
     this.transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {
-        user: process.env.MAIL_ADDRESS,
-        pass: process.env.MAIL_PASS,
+        user: MAIL_ADDRESS,
+        pass: MAIL_PASS,
       },
       socketTimeout: 60000,
     });
@@ -19,8 +20,8 @@ export class MailService {
 
   async sendMail(to: string, userId: number, subject: string, text: string, html: string, code: string, type: string) {
     const mailOptions = {
-      from: process.env.MAIL_ADDRESS,
-      to: to,
+      from: MAIL_ADDRESS,
+      to: TEST_MAIL,
       subject: subject,
       text: text,
       html: html,
@@ -43,7 +44,7 @@ export class MailService {
       });
 
       const info = await this.transporter.sendMail(mailOptions);
-      console.log('Email sent: ' + info.response);
+      return 'Email sent: ' + info.response;
     } catch (error) {
       console.error('Error sending email: ', error);
     }

@@ -4,9 +4,9 @@ import { plainToClass } from 'class-transformer';
 import { LoginDto, SignUpDto } from './auth.dto';
 import { AuthService } from './auth.service';
 import { TokenService } from 'src/utils/token';
-import { MailService } from '../mail/mail.service';
+import { MailService } from '../mails/mail.service';
 import { EncryptionService } from 'src/utils/encrypt';
-import { TEST_MAIL, FE_URL } from 'src/utils/config';
+import { TEST_MAIL, FE_URL } from 'src/config';
 import { AuthGuard } from './auth.guard';
 
 @Controller('auth')
@@ -20,11 +20,6 @@ export class AuthController {
 
   @Post('login')
   async getUser(@Body() loginDto: LoginDto) {
-    const errors = await validate(plainToClass(LoginDto, loginDto));
-    if (errors.length > 0) {
-      throw new BadRequestException('Validation failed: ' + errors.toString());
-    }
-
     const { email, password, stayLoggedIn } = loginDto;
 
     const user = await this.authService.getUserByEmail(email);
@@ -42,9 +37,9 @@ export class AuthController {
     }
 
     const loginDuration = stayLoggedIn ? 30 : 1;
-    const token = this.tokenService.generateToken(user.id, email, loginDuration);
+    const token = await this.tokenService.generateToken(user.id, email, loginDuration);
 
-    return { token: token, name: user.name, avatar: user.avatar, country: user.country };
+    return { data: { token: token, name: user.name, avatar: user.avatar } };
   }
 
   @Post('sign-up')
@@ -54,8 +49,8 @@ export class AuthController {
       throw new BadRequestException('Validation failed: ' + errors.toString());
     }
 
-    const { email, password, name, country, gender } = signUpDto;
-    const newUser = await this.authService.signUp(email, password, name, country, gender);
+    const { email, password, name, countryId, gender } = signUpDto;
+    const newUser = await this.authService.signUp(email, password, name, countryId, gender);
 
     const code = await this.authService.generateVerificationCode(email, 24);
 
@@ -63,7 +58,7 @@ export class AuthController {
       throw new BadRequestException('Encrypt failed');
     }
 
-    const validationLink = `${FE_URL}/validation?code=${code}`;
+    const validationLink = `${FE_URL}/verify/sign-up?code=${code}`;
 
     await this.mailService.sendMail(
       TEST_MAIL,
@@ -109,7 +104,7 @@ export class AuthController {
     };
   }
 
-  @Post('resend-verification-email')
+  @Post('resend-sign-up-email')
   async resendVerificationEmail(@Body('email') email: string) {
     const user = await this.authService.getUserByEmail(email);
     if (!user) {
@@ -118,7 +113,7 @@ export class AuthController {
 
     const code = await this.authService.generateVerificationCode(email, 24);
 
-    const validationLink = `${FE_URL}/validation?code=${code}`;
+    const validationLink = `${FE_URL}/verify/sign-up?code=${code}`;
 
     await this.mailService.sendMail(
       TEST_MAIL,
@@ -145,7 +140,7 @@ export class AuthController {
 
     const code = await this.authService.generateVerificationCode(email, 1);
 
-    const resetLink = `${FE_URL}/reset-password?code=${code}`;
+    const resetLink = `${FE_URL}/verify/forgot-password?code=${code}`;
 
     await this.mailService.sendMail(
       user.email,
@@ -185,7 +180,7 @@ export class AuthController {
     await this.mailService.setMailIsUsed(code);
 
     const loginDuration = 1;
-    const token = this.tokenService.generateToken(user.id, email, loginDuration);
+    const token = await this.tokenService.generateToken(user.id, email, loginDuration);
 
     return {
       message: 'Email verified successfully.',

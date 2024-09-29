@@ -7,37 +7,104 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id         Int      @id @default(autoincrement())
-  email      String   @unique
-  name       String   @unique
-  avatar     String?
-  country    String
-  gender     String
-  password   String
-  googleId  String?  @unique
-  isVerified     Boolean  @default(false)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now()) @updatedAt
+model Country {
+  id            Int         @id @default(autoincrement())
+  chName        String      @unique @db.VarChar(64) @map("ch_name")
+  enName        String      @unique @db.VarChar(64)  @map("en_name")
+  localName     String      @db.VarChar(256) @map("local_name") 
+  currencyCode  String      @db.VarChar(3) @map("currency_code")
+  code          String      @unique @db.VarChar(3)
+  createdAt     DateTime    @default(now()) @db.Timestamp(0) @map("created_at")
+  updatedAt     DateTime    @default(now()) @updatedAt @db.Timestamp(0) @map("updated_at")
 
-  mails      Mail[]
+  users         User[]
+
+  @@map("countries")
+}
+
+model User {
+  id            Int         @id @default(autoincrement())
+  email         String      @unique @db.VarChar(64)
+  name          String      @db.VarChar(64)
+  avatar        String?
+  countryId     Int         @map("country_id")
+  gender        String      @db.VarChar(8)
+  password      String      @db.VarChar(64)
+  googleId      String?     @unique @map("google_id")
+  isVerified    Boolean     @default(false) @map("is_verified")
+  createdAt     DateTime    @default(now()) @db.Timestamp(0) @map("created_at")
+  updatedAt     DateTime    @default(now()) @updatedAt @db.Timestamp(0) @map("updated_at")
+
+  country       Country     @relation(fields: [countryId], references: [id]) 
+  mails         Mail[]
+  trips         Trip[]
+  tripMembers   TripMember[]
+
 
   @@map("users")
 }
 
 model Mail {
-  id         Int      @id @default(autoincrement())
-  userId     Int
-  type       String   @db.VarChar(50)
-  subject    String   @db.VarChar(255)
-  html       String
-  code       String?  @db.VarChar(512)
-  isUsed     Boolean  @default(false)
-  expiresAt  DateTime @default(now()) @db.Timestamp(0)
-  createdAt  DateTime @default(now()) @db.Timestamp(0)
-  updatedAt  DateTime @updatedAt @db.Timestamp(0)
+  id            Int         @id @default(autoincrement())
+  userId        Int         @map("user_id")
+  type          String      @db.VarChar(64)
+  subject       String      @db.VarChar(256)
+  html          String
+  code          String?     @db.VarChar(256)
+  isUsed        Boolean     @default(false) @map("is_used")
+  expiresAt     DateTime    @default(now()) @db.Timestamp(0) @map("expires_at")
+  createdAt     DateTime    @default(now()) @db.Timestamp(0) @map("created_at")
+  updatedAt     DateTime    @default(now()) @updatedAt @db.Timestamp(0) @map("updated_at")
 
-  user       User    @relation(fields: [userId], references: [id])
+  user          User        @relation(fields: [userId], references: [id])
 
   @@map("mails")
+}
+
+model Currency {
+  id            Int         @id @default(autoincrement())
+  code          String      @unique @db.VarChar(3)
+  exchangeRate  Decimal     @default(1.000000) @db.Decimal(12, 6) @map("exchange_rate")
+  baseCurrency  Boolean     @default(false) @map("base_currency")
+  createdAt     DateTime    @default(now()) @db.Timestamp(0) @map("created_at")
+  updatedAt     DateTime    @default(now()) @updatedAt @db.Timestamp(0) @map("updated_at")
+
+  @@map("currencies")
+}
+
+model Trip {
+  id            Int         @id @default(autoincrement())
+  name          String      @db.VarChar(256)
+  description   String
+  coverUrl      String?     @map("cover_url")
+  creatorId     Int         @map("creator_id")
+  currencyCode  String      @db.VarChar(3) @map("currency_code")
+  startTime     DateTime    @db.Timestamp(0) @map("start_time")
+  endTime       DateTime    @db.Timestamp(0) @map("end_time")
+  isDeleted     Boolean     @default(false) @map("is_deleted")
+  createdAt     DateTime    @default(now()) @db.Timestamp(0) @map("created_at")
+  updatedAt     DateTime    @default(now()) @updatedAt @db.Timestamp(0) @map("updated_at")
+
+  creator          User        @relation(fields: [creatorId], references: [id])
+  tripMembers   TripMember[]
+
+  @@map("trips")
+}
+
+model TripMember {
+  id            Int         @id @default(autoincrement())
+  userId        Int         @map("user_id")
+  tripId        Int         @map("trip_id")
+  nickname      String      @db.VarChar(64)
+  permissions   Int         @default(1) 
+  description   Json?
+  note          String?
+  isDeleted     Boolean     @default(false) @map("is_deleted")
+  createdAt     DateTime    @default(now()) @db.Timestamp(0) @map("created_at")
+  updatedAt     DateTime    @default(now()) @updatedAt @db.Timestamp(0) @map("updated_at")
+
+  user          User        @relation(fields: [userId], references: [id])
+  trip          Trip        @relation(fields: [tripId], references: [id])
+
+  @@map("trip_members")
 }
