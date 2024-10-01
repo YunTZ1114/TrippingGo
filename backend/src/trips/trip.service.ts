@@ -27,13 +27,19 @@ export class TripService {
     return trip.id;
   }
 
-  async getTrips(filter: TripFilterType, q: string): Promise<TripPreview[]> {
+  async getTrips(filter: TripFilterType, q: string, userId: number): Promise<TripPreview[]> {
     const trips = await this.databaseService.trip.findMany({
       where: {
         isDeleted: false,
         name: {
           contains: q,
           mode: 'insensitive',
+        },
+        tripMembers: {
+          some: {
+            userId: userId,
+            isDeleted: false,
+          },
         },
       },
       select: {

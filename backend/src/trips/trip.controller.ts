@@ -16,8 +16,9 @@ export class TripController {
 
   @Get('')
   async getTrips(@Request() req, @Query() tripQueryDto: TripQueryDto) {
+    const { userId } = req;
     const { filter, q } = tripQueryDto;
-    const aaa = await this.tripService.getTrips(filter, q);
+    const aaa = await this.tripService.getTrips(filter, q, userId);
     return {
       message: 'Create trip successfully',
       data: aaa,

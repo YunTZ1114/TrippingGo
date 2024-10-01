@@ -61,7 +61,36 @@ export class CurrencyService {
   }
 
   async updateCurrencies() {
-    await this.deleteCurrencies();
-    await this.createCurrencies();
+    const response = await lastValueFrom(this.httpService.get('https://tw.rter.info/capi.php'));
+    const currencyData = response.data;
+
+    const currencies = await this.databaseService.currency.findMany({
+      orderBy: {
+        id: 'asc',
+      },
+    });
+
+    const currencyCodes = new Set(currencies.map((currency) => currency.code));
+
+    await Promise.all(
+      Object.entries(currencyData)
+        .filter(([key]) => {
+          const code = key.slice(3);
+          return currencyCodes.has(code);
+        })
+        .map(([key, value]) => {
+          const code = key.slice(3);
+          const newExchangeRate = value['Exrate'];
+
+          return this.databaseService.currency.update({
+            where: {
+              code: code,
+            },
+            data: {
+              exchangeRate: newExchangeRate,
+            },
+          });
+        }),
+    );
   }
 }
