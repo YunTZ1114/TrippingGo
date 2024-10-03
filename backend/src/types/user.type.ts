@@ -1,4 +1,4 @@
-import { CommonFields } from './common.type';
+// import { CommonFields } from './common.type';
 
 export type UserPreview = {
   id: number;

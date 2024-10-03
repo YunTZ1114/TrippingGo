@@ -3,11 +3,12 @@ import { Module } from '@nestjs/common';
 import { AuthModule } from './auth/auth.module';
 import { CurrencyModule } from './currencies/currency.module';
 import { CountryModule } from './countries/country.module';
-import { TripModule } from './trips/trip.module';
 import { UserModule } from './users/user.module';
+import { TripModule } from './trips/trip.module';
+import { TripMemberModule } from './tripMember/tripMember.module';
 
 @Module({
-  imports: [AuthModule, CurrencyModule, CountryModule, TripModule, UserModule],
+  imports: [AuthModule, CurrencyModule, CountryModule, TripModule, TripMemberModule, UserModule],
   controllers: [],
   providers: [],
 })

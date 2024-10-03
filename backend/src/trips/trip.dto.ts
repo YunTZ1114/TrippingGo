@@ -34,3 +34,28 @@ export class TripQueryDto {
   @IsString()
   q?: string;
 }
+
+export class UpdateTripDto {
+  @IsNotEmpty()
+  @MinLength(3)
+  name: string;
+
+  @IsNotEmpty()
+  description: string;
+
+  @IsNotEmpty()
+  @MaxLength(3)
+  currencyCode: string;
+
+  @IsNotEmpty()
+  @IsDateString()
+  startTime: Date;
+
+  @IsNotEmpty()
+  @IsDateString()
+  endTime: Date;
+
+  @IsOptional()
+  @IsString()
+  coverUrl?: string;
+}

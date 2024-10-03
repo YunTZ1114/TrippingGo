@@ -1,16 +1,18 @@
-import { Body, Controller, Get, Param, Post, Query, Request, UseGuards } from '@nestjs/common';
-import { TripService } from './trip.service';
-import { TripDto, TripQueryDto } from './trip.dto';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, Request, UseGuards } from '@nestjs/common';
+import { TripDto, TripQueryDto, UpdateTripDto } from './trip.dto';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { DatabaseService } from 'src/database/database.service';
 import { TripGuard } from './trip.guard';
 import { RequiredPermission } from 'src/decorators/required-permission.decorator';
+import { TripService } from './trip.service';
+import { TripMemberService } from '../tripMember/tripMember.service';
 
 @Controller('trips')
 @UseGuards(AuthGuard, TripGuard)
 export class TripController {
   constructor(
     private readonly tripService: TripService,
+    private readonly tripMemberService: TripMemberService,
     private readonly databaseService: DatabaseService,
   ) {}
 
@@ -18,10 +20,10 @@ export class TripController {
   async getTrips(@Request() req, @Query() tripQueryDto: TripQueryDto) {
     const { userId } = req;
     const { filter, q } = tripQueryDto;
-    const aaa = await this.tripService.getTrips(filter, q, userId);
+    const trips = await this.tripService.getTrips(filter, q, userId);
     return {
-      message: 'Create trip successfully',
-      data: aaa,
+      message: 'Retrieve trip successfully',
+      data: trips,
     };
   }
 
@@ -34,7 +36,7 @@ export class TripController {
     const result = await this.databaseService.executeTransaction(async () => {
       const tripId = await this.tripService.createTrip({ creatorId: userId, name, description, currencyCode, startTime, endTime });
 
-      if (memberIds?.length) tripMemberIds = await this.tripService.createTripMembers(tripId, memberIds);
+      if (memberIds?.length) tripMemberIds = await this.tripMemberService.createTripMembers(tripId, memberIds);
 
       return { data: { tripId, tripMemberIds } };
     });
@@ -45,21 +47,29 @@ export class TripController {
     };
   }
 
-  @Get('/:tripId/members')
-  @RequiredPermission(2)
-  async getTrip(@Param('tripId') tripId: number) {
-    const tripMembers = await this.tripService.getTripMembers(tripId);
-    return { data: tripMembers };
+  @Put('/:tripId')
+  @RequiredPermission(4)
+  async updateTrip(@Param('tripId') tripId: number, @Body() updateTripDto: UpdateTripDto) {
+    const updatedTripId = await this.tripService.updateTrip({ ...updateTripDto, id: tripId });
+    return {
+      message: 'Update trip successfully',
+      data: updatedTripId,
+    };
   }
 
-  @Post('/:tripId/members')
+  @Delete('/:tripId')
   @RequiredPermission(4)
-  async createTripMembers(@Param('tripId') tripId: number, @Body('memberIds') memberIds: number[]) {
-    if (memberIds?.length) await this.tripService.createTripMembers(tripId, memberIds);
+  async deleteTrip(@Param('tripId') tripId: number) {
+    const result = await this.databaseService.executeTransaction(async () => {
+      const removeMemberNumber = await this.tripMemberService.deleteAllTripMembers(tripId);
+
+      const deleteTripId = await this.tripService.deleteTrip(tripId);
+      return { removeMemberNumber, deleteTripId };
+    });
 
     return {
-      message: 'Add members in trip successfully',
-      data: memberIds,
+      message: `Delete trip (id = ${result.deleteTripId}) and removed ${result.removeMemberNumber} members successfully`,
+      data: result.deleteTripId,
     };
   }
 }
