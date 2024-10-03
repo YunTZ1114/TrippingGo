@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { isNumber } from 'class-validator';
 import { DatabaseService } from 'src/database/database.service';
 import { BaseTrip, TripPreview, TripFilterType } from 'src/types/trip.type';
 
@@ -7,7 +6,6 @@ import { BaseTrip, TripPreview, TripFilterType } from 'src/types/trip.type';
 export class TripService {
   constructor(private readonly databaseService: DatabaseService) {}
 
-  // ====================    Trip    ====================
   async createTrip({ creatorId, name, description, currencyCode, startTime, endTime }: Omit<BaseTrip, 'id' | 'coverUrl'>) {
     const user = await this.databaseService.user.findUnique({ where: { id: creatorId } });
 
@@ -80,102 +78,38 @@ export class TripService {
     return result;
   }
 
-  // ==================== TripMember ====================
-  async createTripMembers(tripId: number, userIds: number[]) {
-    const users = await this.databaseService.user.findMany({
-      where: {
-        id: { in: userIds },
-        isVerified: true,
-      },
-      select: {
-        id: true,
-        name: true,
-      },
-    });
+  async updateTrip({ id, name, description, currencyCode, startTime, endTime, coverUrl }: Omit<BaseTrip, 'creatorId'>) {
+    const trip = await this.databaseService.trip.findUnique({ where: { id } });
 
-    if (!users?.length) throw new Error('No valid users found for the provided member IDs.');
+    if (!trip) throw new Error('The trip does not exist.');
 
-    const originTripMembers = await this.databaseService.tripMember.findMany({
-      where: {
-        userId: { in: users.map((user) => user.id) },
-        tripId: tripId,
-      },
-      select: {
-        userId: true,
+    const updatedTrip = await this.databaseService.trip.update({
+      where: { id, isDeleted: false },
+      data: {
+        name,
+        description,
+        currencyCode,
+        startTime,
+        endTime,
+        coverUrl: coverUrl ?? trip.coverUrl,
       },
     });
 
-    const tripMemberIdsSet = new Set(originTripMembers.map((member) => member.userId));
-
-    const tripMembersData = users
-      .filter(({ id }) => !tripMemberIdsSet.has(id))
-      .map((user) => ({
-        userId: user.id,
-        nickname: user.name,
-        tripId: tripId,
-      }));
-
-    if (!tripMembersData.length) throw new Error('No new members to add.');
-
-    const tripMembers = await this.databaseService.tripMember.createMany({
-      data: tripMembersData,
-    });
-
-    if (tripMembers?.count === 0) throw new Error('Error creating trip members');
-
-    return [tripMembers];
+    return updatedTrip.id;
   }
 
-  async getTripMembers(tripId: number) {
-    const tripMembers = await this.databaseService.tripMember.findMany({
-      include: {
-        user: {
-          select: {
-            name: true,
-            avatar: true,
-          },
-        },
+  async deleteTrip(id: number) {
+    const trip = await this.databaseService.trip.findUnique({ where: { id } });
+
+    if (!trip) throw new Error('The trip does not exist.');
+
+    const deleteTrip = await this.databaseService.trip.update({
+      where: { id },
+      data: {
+        isDeleted: true,
       },
-      where: { tripId: tripId },
     });
 
-    const formattedTripMembers = tripMembers.map((member) => {
-      const { user, tripId, permissions, ...others } = member;
-
-      const role = (() => {
-        switch (permissions) {
-          case 1:
-            return '檢視者';
-          case 3:
-            return '編輯者';
-          case 4:
-            return '創建者';
-          default:
-            return '非法者';
-        }
-      })();
-
-      return {
-        ...others,
-        userName: user.name,
-        avatar: user.avatar,
-        role: role,
-      };
-    });
-
-    return formattedTripMembers ?? [];
-  }
-
-  async getTripMemberPermission(tripId: number, userId: number) {
-    const tripMember = await this.databaseService.tripMember.findMany({
-      where: { tripId, userId },
-      select: { permissions: true },
-    });
-
-    if (tripMember.length === 0 || !isNumber(tripMember[0]?.permissions)) {
-      throw new Error('Permissions not found or invalid.');
-    }
-
-    return tripMember[0]?.permissions;
+    return deleteTrip.id;
   }
 }

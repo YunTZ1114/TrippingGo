@@ -21,11 +21,14 @@ export class HttpExceptionFilter implements ExceptionFilter {
               statusCode: 500,
             },
     };
-
-    console.error('Error occurred:', {
-      statusCode: status,
-      stack: exception instanceof Error ? exception.stack : null,
-    });
+    if (exception instanceof Error) {
+      console.error('Error occurred:', exception);
+    } else {
+      console.error('Error occurred:', {
+        statusCode: status,
+        message: exception,
+      });
+    }
 
     return response.status(status).json(errorResponse.message);
   }
