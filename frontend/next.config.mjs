@@ -10,7 +10,7 @@ const nextConfig = {
     return [
       {
         source: "/api/:path*",
-        destination: `${env.parsed.API_BASE_URL}/:path*`,
+        destination: `${env.parsed.API_BASE_URL}/api/:path*`,
       },
     ];
   },
