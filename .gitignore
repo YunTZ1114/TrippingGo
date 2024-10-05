@@ -2,8 +2,3 @@
 .env
 .env.development
 node_modules
-
-#backend
-backend/dist
-backend/prisma/.env
-backend/node_modules
