@@ -1,5 +1,5 @@
 #backend
 /dist
 /prisma/.env
-
+/prisma/migrations
 /node_modules
