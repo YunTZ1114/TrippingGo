@@ -6,6 +6,7 @@ declare global {
       userId?: number;
       email?: string;
       userPermission?: number;
+      tripMemberId?: number;
     }
   }
 }
