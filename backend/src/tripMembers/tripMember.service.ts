@@ -83,9 +83,9 @@ export class TripMemberService {
             return 'Deleted';
           case 1:
             return 'Viewer';
-          case 3:
+          case 2:
             return 'Editor';
-          case 4:
+          case 3:
             return 'Creator';
           default:
             return 'None';

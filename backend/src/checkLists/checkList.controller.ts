@@ -20,7 +20,7 @@ export class CheckListController {
   }
 
   @Post('')
-  @RequiredPermission(3)
+  @RequiredPermission(2)
   async createCheckList(@Request() req, @Body() checkListDto: CheckListDto) {
     const { tripMemberId } = req;
     const checkListId = await this.checkListService.createCheckList({ tripMemberId, ...checkListDto });
@@ -37,7 +37,7 @@ export class CheckListController {
   }
 
   @Put('/:checkListId')
-  @RequiredPermission(3)
+  @RequiredPermission(2)
   async updateCheckList(
     @Request() req,
     @Param('checkListId') checkListId: number,
@@ -55,7 +55,7 @@ export class CheckListController {
   }
 
   @Delete('/:checkListId')
-  @RequiredPermission(3)
+  @RequiredPermission(2)
   async deleteCheckList(@Request() req, @Param('checkListId') checkListId: number) {
     const { tripMemberId } = req;
     await this.checkListService.deleteCheckList(checkListId, tripMemberId);

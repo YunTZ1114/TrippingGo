@@ -22,7 +22,7 @@ export class TripMemberController {
   }
 
   @Post('')
-  @RequiredPermission(4)
+  @RequiredPermission(3)
   async createTripMembers(@Param('tripId') tripId: number, @Body('memberIds') memberIds: number[]) {
     if (memberIds?.length) await this.tripMemberService.createTripMembers(tripId, memberIds);
 
