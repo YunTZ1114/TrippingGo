@@ -106,14 +106,14 @@ export class TripMemberService {
   async getTripMemberPermission(tripId: number, userId: number) {
     const tripMember = await this.databaseService.tripMember.findMany({
       where: { tripId, userId },
-      select: { permissions: true },
+      select: { permissions: true, id: true },
     });
 
     if (tripMember.length === 0 || !isNumber(tripMember[0]?.permissions)) {
       throw new Error('Permissions not found or invalid.');
     }
 
-    return tripMember[0]?.permissions;
+    return tripMember[0];
   }
 
   async updateTripMember(memberData: Omit<BaseTripMember, 'permissions'>[]) {

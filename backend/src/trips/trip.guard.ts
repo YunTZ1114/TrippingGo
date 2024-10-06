@@ -20,11 +20,12 @@ export class TripGuard implements CanActivate {
 
     try {
       if (!requiredPermission) return true;
-      const userPermission = await this.tripMemberService.getTripMemberPermission(tripId, userId);
+      const { permissions, id } = await this.tripMemberService.getTripMemberPermission(tripId, userId);
 
-      request.userPermission = userPermission;
+      request.userPermission = permissions;
+      request.tripMemberId = id;
 
-      return userPermission >= requiredPermission;
+      return permissions >= requiredPermission;
     } catch (error) {
       throw new UnauthorizedException('Invalid permissionCode : ', error.message);
     }
