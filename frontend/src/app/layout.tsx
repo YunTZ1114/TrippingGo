@@ -3,7 +3,8 @@ import zhTW from "antd/locale/zh_TW";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { AntdRegistry } from "@ant-design/nextjs-registry";
-import { colors } from "@/theme/colors";
+import { antdTheme } from "@/theme";
+import Providers from "./providers";
 import "./globals.css";
 
 // If loading a variable font, you don't need to specify the font weight
@@ -31,34 +32,13 @@ export default function RootLayout({
           href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
           rel="stylesheet"
         />
-
-        <AntdRegistry layer>
-          <ConfigProvider
-            locale={zhTW}
-            theme={{
-              token: { colorPrimary: "#E77F6C", colorText: "#000000" },
-              components: {
-                Input: {
-                  colorFillTertiary: colors.surfaceLight,
-                  colorFillSecondary: colors.surfaceLight,
-                  activeBg: colors.surfaceLight,
-                  activeBorderColor: colors.surfaceLight,
-                },
-                Select: {
-                  colorFillTertiary: colors.surfaceLight,
-                  colorFillSecondary: colors.surfaceLight,
-                  selectorBg: colors.surfaceLight,
-                  colorPrimaryBorder: colors.surfaceLight,
-                },
-                Button: {
-                  defaultBorderColor: colors.text,
-                },
-              },
-            }}
-          >
-            {children}
-          </ConfigProvider>
-        </AntdRegistry>
+        <Providers>
+          <AntdRegistry layer>
+            <ConfigProvider locale={zhTW} theme={antdTheme}>
+              {children}
+            </ConfigProvider>
+          </AntdRegistry>
+        </Providers>
       </body>
     </html>
   );

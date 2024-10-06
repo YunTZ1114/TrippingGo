@@ -17,7 +17,7 @@ import { api } from "@/api";
 import { useRouter } from "next/navigation";
 import { getErrorMessage } from "@/api/utils";
 import { MaterialSymbol } from "@/components/MaterialSymbol";
-import { useMountApi } from "@/hooks";
+import { useMutation } from "@tanstack/react-query";
 
 type FormData = { email: string; password: string; stayLoggedIn: boolean };
 
@@ -25,26 +25,24 @@ const Login = () => {
   const [form] = useForm<FormData>();
   const [hasSubmitted, setHasSubmitted] = useState(false);
   const [openModal, setOpenModal] = useState(false);
-  const { loading, mount } = useMountApi();
 
   const { props: alertProps, showAlert } = useAlert();
   const router = useRouter();
 
-  const handleLogin = async (data: FormData) => {
-    const [success, error] = await mount(() => api.auth.login({ data }));
-
-    if (error || !success) {
+  const loginAction = useMutation({
+    mutationFn: api.auth.login,
+    onError: (error) => {
       showAlert({
         type: "error",
         message: getErrorMessage(error, { 400: "帳號或密碼錯誤" }),
       });
-      return;
-    }
-
-    localStorage.setItem("token", success.token);
-    showAlert({ type: "success", message: "登入成功" });
-    router.push("/");
-  };
+    },
+    onSuccess: (success) => {
+      localStorage.setItem("token", success.token);
+      showAlert({ type: "success", message: "登入成功" });
+      router.push("/");
+    },
+  });
 
   return (
     <>
@@ -64,7 +62,7 @@ const Login = () => {
         form={form}
         layout="vertical"
         validateTrigger={hasSubmitted ? "onChange" : "onSubmit"}
-        onFinish={handleLogin}
+        onFinish={(data) => loginAction.mutate({ data })}
         initialValues={{ stayLoggedIn: false }}
       >
         <FormItem
@@ -102,7 +100,7 @@ const Login = () => {
           setHasSubmitted(true);
           form.submit();
         }}
-        loading={loading}
+        loading={loginAction.isPending}
       >
         登入
       </Button>

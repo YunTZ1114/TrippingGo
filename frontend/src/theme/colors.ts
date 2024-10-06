@@ -1,5 +1,5 @@
 export const colors = {
-  primary: "#E77F6C",
+  primary: { base: "#E77F6C", hover: "#F8A292" },
   surface: "#F7DECD",
   surfaceLight: "#F7F0EA",
   white: "#FFFFFF",
