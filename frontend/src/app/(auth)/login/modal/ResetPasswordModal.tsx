@@ -10,9 +10,8 @@ import {
   useForm,
 } from "@/components";
 import { MaterialSymbol } from "@/components/MaterialSymbol";
-import { useMountApi } from "@/hooks";
+import { useMutation } from "@tanstack/react-query";
 import { Modal } from "antd";
-import { AxiosError } from "axios";
 import { useState } from "react";
 
 type FormData = { email: string };
@@ -27,26 +26,22 @@ export const ResetPasswordModal = ({
   const [form] = useForm<FormData>();
   const [hasSubmitted, setHasSubmitted] = useState(false);
 
-  const { loading, mount } = useMountApi();
   const { showAlert, props: alertProps } = useAlert();
-
-  const handleFinish = async (data: FormData) => {
-    const [success, error] = await mount(() =>
-      api.auth.forgotPassword({ data })
-    );
-
-    if (error || !success) {
+  const forgotPasswordAction = useMutation({
+    mutationFn: api.auth.forgotPassword,
+    onError: (error) => {
       showAlert({
         type: "error",
         message: getErrorMessage(error, { 400: "此帳號還沒註冊呦" }),
       });
-      return;
-    }
-    showAlert({
-      type: "success",
-      message: "重設密碼信件已寄出！可能要等幾分鐘，請確認您的信箱～",
-    });
-  };
+    },
+    onSuccess: () => {
+      showAlert({
+        type: "success",
+        message: "重設密碼信件已寄出！可能要等幾分鐘，請確認您的信箱～",
+      });
+    },
+  });
 
   return (
     <Modal
@@ -77,7 +72,7 @@ export const ResetPasswordModal = ({
         form={form}
         layout="vertical"
         className="mt-5 mb-10"
-        onFinish={handleFinish}
+        onFinish={(data) => forgotPasswordAction.mutate({ data })}
       >
         <FormItem
           name="email"
@@ -98,7 +93,7 @@ export const ResetPasswordModal = ({
           setHasSubmitted(true);
           form.submit();
         }}
-        loading={loading}
+        loading={forgotPasswordAction.isPending}
       >
         寄送重設密碼信件
       </Button>

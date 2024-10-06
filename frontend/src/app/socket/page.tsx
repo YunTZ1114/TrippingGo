@@ -27,6 +27,7 @@ export default function Home() {
     }
 
     socket.on("connect", onConnect);
+    socket.emit("message", "ya");
     socket.on("disconnect", onDisconnect);
 
     return () => {

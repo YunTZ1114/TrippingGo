@@ -10,7 +10,7 @@ const BaseSelect = (props: AntdSelectProps) => {
   return <AntdSelect {...props} />;
 };
 
-const SelectWithSearch = ({ options, ...props }: AntdSelectProps) => {
+const SelectWithSearch = ({ options, onSearch, ...props }: AntdSelectProps) => {
   const [searchValue, setSearchValue] = useState("");
   const currentOption = useMemo(() => {
     if (!options) return [];
@@ -26,7 +26,10 @@ const SelectWithSearch = ({ options, ...props }: AntdSelectProps) => {
       options={currentOption}
       showSearch
       filterOption={false}
-      onSearch={setSearchValue}
+      onSearch={(value) => {
+        setSearchValue(value);
+        onSearch?.(value);
+      }}
       {...props}
     />
   );

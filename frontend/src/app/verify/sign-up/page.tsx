@@ -1,20 +1,40 @@
+"use client";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { api } from "@/api";
-import { Button } from "@/components";
+import { Button, Loading } from "@/components";
 import { MaterialSymbol } from "@/components/MaterialSymbol";
-import { CountDown } from "./CountDown";
+import { useQuery } from "@tanstack/react-query";
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
 
-const VerifySignUp = async ({
+const VerifySignUp = ({
   searchParams,
 }: {
   searchParams: { [key: string]: string | string[] | undefined };
 }) => {
   const code = searchParams?.code;
   if (!code || typeof code !== "string") redirect("/verify/fail");
-  await api.auth.verifySignUp({ data: { code } }).catch((err) => {
-    redirect("/verify/fail");
+
+  const verifyData = useQuery({
+    queryKey: api.auth.keys.verifySignUp(),
+    queryFn: api.auth.verifySignUp,
+    retry: false,
   });
+
+  if (verifyData.isLoading) return <Loading />;
+  if (!verifyData.data || verifyData.isError) redirect("/verify/fail");
+
+  const router = useRouter();
+  const [second, setSecond] = useState<number>(5);
+
+  useEffect(() => {
+    if (second === 0) {
+      router.push("/login");
+      return;
+    }
+    setTimeout(() => setSecond(second - 1), 1000);
+  }, [second]);
 
   return (
     <>
@@ -25,7 +45,7 @@ const VerifySignUp = async ({
       <div className="text-center text-gray-400">
         email驗證成功，您已成功註冊成為 tripping Go! 會員
         <br />
-        將會在 <CountDown start={5} />
+        將會在 {second}
         秒後跳轉到登入頁
         <br />
         如果沒有自動跳轉請點擊下方按鈕移動

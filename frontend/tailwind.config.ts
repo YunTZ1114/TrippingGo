@@ -8,6 +8,9 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      boxShadow: {
+        paper: "-10px 16px 0px 4px #D66B5C;",
+      },
       colors: {
         primary: "#E77F6C",
         surface: "#F7DECD",

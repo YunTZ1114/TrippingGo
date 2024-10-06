@@ -1,4 +1,5 @@
 "use client";
+
 import {
   Alert,
   Button,
@@ -15,9 +16,8 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { api } from "@/api";
 import { getErrorMessage } from "@/api/utils";
-import { useMountApi } from "@/hooks";
 import { SignUpSuccessModal } from "./modal";
-import { Country } from "@/api/info";
+import { useMutation, useQuery } from "@tanstack/react-query";
 
 type FormData = {
   email: string;
@@ -28,34 +28,34 @@ type FormData = {
   gender: string | null;
 };
 
-export const SignUp = ({ countries }: { countries: Country[] }) => {
+const SignUp = () => {
   const [form] = useForm<FormData>();
   const [hasSubmitted, setHasSubmitted] = useState(false);
   const [openModal, setOpenModal] = useState(false);
-  const router = useRouter();
 
-  const { loading, mount } = useMountApi();
+  const router = useRouter();
   const { props: alertProps, showAlert } = useAlert();
 
-  const handleLogin = async (data: FormData) => {
-    const { confirmPassword, ...apiData } = data;
+  const countries = useQuery({
+    queryKey: api.info.keys.countries(),
+    queryFn: api.info.countries,
+    gcTime: Infinity,
+  });
 
-    const [success, error] = await mount(() =>
-      api.auth.signUp({ data: apiData }),
-    );
-
-    if (error || !success) {
+  const signUpAction = useMutation({
+    mutationFn: api.auth.signUp,
+    onError: (error) => {
       showAlert({
         type: "error",
         message: getErrorMessage(error, { 409: "帳號已註冊過" }),
       });
-      return;
-    }
+    },
+    onSuccess: () => {
+      setOpenModal(true);
+    },
+  });
 
-    setOpenModal(true);
-  };
-
-  const countryOption = countries.map(({ id, localName }) => ({
+  const countryOption = countries.data?.map(({ id, localName }) => ({
     label: localName,
     value: id,
   }));
@@ -78,7 +78,9 @@ export const SignUp = ({ countries }: { countries: Country[] }) => {
         form={form}
         layout="vertical"
         validateTrigger={hasSubmitted ? "onChange" : "onSubmit"}
-        onFinish={handleLogin}
+        onFinish={({ confirmPassword, ...data }) =>
+          signUpAction.mutate({ data })
+        }
         initialValues={{ countryId: null, gender: null }}
       >
         <FormItem
@@ -109,6 +111,7 @@ export const SignUp = ({ countries }: { countries: Country[] }) => {
               size="large"
               variant="filled"
               className="w-full"
+              loading={countries.isLoading}
               options={countryOption}
             />
           </FormItem>
@@ -163,7 +166,7 @@ export const SignUp = ({ countries }: { countries: Country[] }) => {
         type="primary"
         className="w-full rounded-full"
         size="large"
-        loading={loading}
+        loading={signUpAction.isPending}
         onClick={() => {
           setHasSubmitted(true);
           form.submit();
@@ -190,3 +193,5 @@ export const SignUp = ({ countries }: { countries: Country[] }) => {
     </>
   );
 };
+
+export default SignUp;
