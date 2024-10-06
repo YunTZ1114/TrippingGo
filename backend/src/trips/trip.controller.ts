@@ -5,7 +5,7 @@ import { DatabaseService } from 'src/database/database.service';
 import { TripGuard } from './trip.guard';
 import { RequiredPermission } from 'src/decorators/required-permission.decorator';
 import { TripService } from './trip.service';
-import { TripMemberService } from '../tripMember/tripMember.service';
+import { TripMemberService } from '../tripMembers/tripMember.service';
 
 @Controller('trips')
 @UseGuards(AuthGuard, TripGuard)
@@ -38,7 +38,7 @@ export class TripController {
 
       if (memberIds?.length) tripMemberIds = await this.tripMemberService.createTripMembers(tripId, memberIds);
 
-      return { data: { tripId, tripMemberIds } };
+      return { tripId, tripMemberIds };
     });
 
     return {
@@ -48,7 +48,7 @@ export class TripController {
   }
 
   @Put('/:tripId')
-  @RequiredPermission(4)
+  @RequiredPermission(3)
   async updateTrip(@Param('tripId') tripId: number, @Body() updateTripDto: UpdateTripDto) {
     const updatedTripId = await this.tripService.updateTrip({ ...updateTripDto, id: tripId });
     return {
@@ -58,7 +58,7 @@ export class TripController {
   }
 
   @Delete('/:tripId')
-  @RequiredPermission(4)
+  @RequiredPermission(3)
   async deleteTrip(@Param('tripId') tripId: number) {
     const result = await this.databaseService.executeTransaction(async () => {
       const removeMemberNumber = await this.tripMemberService.deleteAllTripMembers(tripId);

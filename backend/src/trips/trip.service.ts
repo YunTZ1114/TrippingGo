@@ -10,7 +10,7 @@ export class TripService {
     const user = await this.databaseService.user.findUnique({ where: { id: creatorId } });
 
     const trip = await this.databaseService.trip.create({
-      data: { creatorId, name, description, currencyCode, startTime, endTime },
+      data: { creatorId, name, description, currencyCode, startTime: new Date(startTime), endTime: new Date(endTime) },
     });
 
     await this.databaseService.tripMember.create({

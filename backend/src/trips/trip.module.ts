@@ -6,7 +6,7 @@ import { TripService } from './trip.service';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { AuthModule } from 'src/auth/auth.module';
 import { TripGuard } from './trip.guard';
-import { TripMemberService } from '../tripMember/tripMember.service';
+import { TripMemberService } from '../tripMembers/tripMember.service';
 
 const PROVIDERS = [AuthGuard, TripGuard, TokenService, DatabaseService, TripService, TripMemberService];
 

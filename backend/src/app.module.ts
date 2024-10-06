@@ -5,11 +5,12 @@ import { CurrencyModule } from './currencies/currency.module';
 import { CountryModule } from './countries/country.module';
 import { UserModule } from './users/user.module';
 import { TripModule } from './trips/trip.module';
-import { TripMemberModule } from './tripMember/tripMember.module';
+import { TripMemberModule } from './tripMembers/tripMember.module';
 import { CheckListModule } from './checkLists/checkList.module';
+import { ReservationModule } from './reservations/reservation.module';
 
 @Module({
-  imports: [AuthModule, CurrencyModule, CountryModule, TripModule, TripMemberModule, UserModule, CheckListModule],
+  imports: [AuthModule, CurrencyModule, CountryModule, TripModule, TripMemberModule, UserModule, CheckListModule, ReservationModule],
   controllers: [],
   providers: [],
 })

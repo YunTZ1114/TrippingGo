@@ -1,7 +1,7 @@
 import { Injectable, CanActivate, ExecutionContext, UnauthorizedException } from '@nestjs/common';
 import { Request } from 'express';
 import { Reflector } from '@nestjs/core';
-import { TripMemberService } from '../tripMember/tripMember.service';
+import { TripMemberService } from '../tripMembers/tripMember.service';
 
 @Injectable()
 export class TripGuard implements CanActivate {

@@ -130,13 +130,14 @@ model CheckList {
 
 model Reservation {
   id              Int       @id @default(autoincrement())
+  title           String    @db.VarChar(100)
   type            String    @db.VarChar(50)
   reservationTime DateTime  @map("reservation_time")
   endTime         DateTime? @map("end_time")
   // placeId         Int                                        // 地點
   tripMemberId    Int       @map("trip_member_id")
   amount          Int
-  notes           String?   @db.Text
+  note           String?   @db.Text
   description     String?   @db.Text
   isDeleted       Boolean   @default(false) @map("is_deleted")
   createdAt       DateTime  @default(now()) @db.Timestamp(0) @map("created_at")
@@ -147,14 +148,3 @@ model Reservation {
 
   @@map("reservations")
 }
-
-
-
-
-
-
-
-
-
-
-
