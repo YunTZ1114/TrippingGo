@@ -85,7 +85,7 @@ model Trip {
   createdAt     DateTime    @default(now()) @db.Timestamp(0) @map("created_at")
   updatedAt     DateTime    @default(now()) @updatedAt @db.Timestamp(0) @map("updated_at")
 
-  creator          User        @relation(fields: [creatorId], references: [id])
+  creator       User        @relation(fields: [creatorId], references: [id])
   tripMembers   TripMember[]
 
   @@map("trips")
@@ -105,7 +105,8 @@ model TripMember {
 
   user          User        @relation(fields: [userId], references: [id])
   trip          Trip        @relation(fields: [tripId], references: [id])
-  checkLists  CheckList[]
+  checkLists    CheckList[]
+  reservations   Reservation[]
 
   @@map("trip_members")
 }
@@ -126,6 +127,26 @@ model CheckList {
   @@map("check_lists")
 }
 
+
+model Reservation {
+  id              Int       @id @default(autoincrement())
+  type            String    @db.VarChar(50)
+  reservationTime DateTime  @map("reservation_time")
+  endTime         DateTime? @map("end_time")
+  // placeId         Int                                        // 地點
+  tripMemberId    Int       @map("trip_member_id")
+  amount          Int
+  notes           String?   @db.Text
+  description     String?   @db.Text
+  isDeleted       Boolean   @default(false) @map("is_deleted")
+  createdAt       DateTime  @default(now()) @db.Timestamp(0) @map("created_at")
+  updatedAt       DateTime  @default(now()) @updatedAt @db.Timestamp(0) @map("updated_at")
+
+  // place           Place     @relation(fields: [placeId], references: [id])    // 外來鍵，參照 places 表
+  tripMember      TripMember @relation(fields: [tripMemberId], references: [id]) // 外來鍵，參照 trip_members 表
+
+  @@map("reservations")
+}
 
 
 
