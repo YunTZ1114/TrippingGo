@@ -1,0 +1,24 @@
+.sidebar {
+  & .ant-menu-title-content {
+    @apply font-bold;
+  }
+  & .ant-menu-item .ant-menu-item-icon {
+    @apply relative;
+    &::before {
+      @apply rounded-full transition-all duration-300 inset-3 bg-white/0 absolute;
+      content: "";
+    }
+  }
+  & .ant-menu-item-selected .ant-menu-item-icon::before {
+    @apply -inset-1 bg-white/30;
+  }
+  & .ant-menu-sub {
+    @apply border-l-2 border-white/30 ml-10 border-solid;
+    & .ant-menu-item {
+      @apply border-l-2 border-white/0 -ml-[2px] border-solid rounded-none !pl-3;
+    }
+    & .ant-menu-item-selected {
+      @apply border-white;
+    }
+  }
+}

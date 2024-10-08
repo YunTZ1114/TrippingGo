@@ -94,7 +94,7 @@ const UserSelect = ({ value, ...props }: SelectProps) => {
 };
 
 type FormData = Omit<BaseTrip, "startTime" | "endTime" | "memberIds"> & {
-  members: string[];
+  members?: string[];
   date: [Dayjs, Dayjs];
 };
 
@@ -113,13 +113,11 @@ export const NewTripModal = ({
 
   const [form] = useForm<FormData>();
   const [hasSubmitted, setHasSubmitted] = useState(false);
-  const { showAlert, props: alertProps } = useAlert();
   const router = useRouter();
 
   const postTripAction = useMutation({
     mutationFn: api.trips.post,
     onSuccess: ({ tripId }) => {
-      console.log({ tripId });
       router.push(`/trips/${tripId}`);
     },
   });
@@ -132,7 +130,8 @@ export const NewTripModal = ({
       data: {
         startTime,
         endTime,
-        memberIds: members.map((v: string) => JSON.parse(v).id as number) ?? [],
+        memberIds:
+          members?.map((v: string) => JSON.parse(v).id as number) ?? [],
         ...value,
       },
     });
