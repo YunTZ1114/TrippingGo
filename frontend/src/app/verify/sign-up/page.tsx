@@ -1,29 +1,25 @@
 "use client";
 import Link from "next/link";
-import { redirect } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 import { api } from "@/api";
 import { Button, Loading } from "@/components";
 import { MaterialSymbol } from "@/components/MaterialSymbol";
 import { useQuery } from "@tanstack/react-query";
-import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import { useSearchParams } from "@/hooks";
 
-const VerifySignUp = ({
-  searchParams,
-}: {
-  searchParams: { [key: string]: string | string[] | undefined };
-}) => {
-  const code = searchParams?.code;
-  if (!code || typeof code !== "string") redirect("/verify/fail");
+const VerifySignUp = () => {
+  const { searchParams } = useSearchParams();
+  const code = searchParams.get("code");
 
   const verifyData = useQuery({
     queryKey: api.auth.keys.verifySignUp(),
-    queryFn: api.auth.verifySignUp,
+    queryFn: async () => {
+      if (!code) throw new Error("code must be provide");
+      await api.auth.verifySignUp({ data: { code } });
+    },
     retry: false,
   });
-
-  if (verifyData.isLoading) return <Loading />;
-  if (!verifyData.data || verifyData.isError) redirect("/verify/fail");
 
   const router = useRouter();
   const [second, setSecond] = useState<number>(5);
@@ -35,6 +31,9 @@ const VerifySignUp = ({
     }
     setTimeout(() => setSecond(second - 1), 1000);
   }, [second]);
+
+  if (verifyData.isLoading) return <Loading />;
+  if (!verifyData.data) redirect("/verify/fail");
 
   return (
     <>

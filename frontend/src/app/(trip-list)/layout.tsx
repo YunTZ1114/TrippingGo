@@ -4,19 +4,29 @@ import { api } from "@/api";
 import { logo } from "@/assets";
 import { Input } from "@/components";
 import { MaterialSymbol } from "@/components/MaterialSymbol";
+import { useSearchParams } from "@/hooks";
 import { useQuery } from "@tanstack/react-query";
 import { Avatar } from "antd";
 import Image from "next/image";
+import { redirect } from "next/navigation";
+import { useCallback } from "react";
 
 const Layout = ({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) => {
+  const { searchParams, setSearchParams } = useSearchParams();
+
   const userMe = useQuery({
     queryKey: api.users.keys.me(),
     queryFn: api.users.me,
   });
+
+  if (userMe.error) {
+    redirect("/login");
+  }
+  console.log(userMe.error);
 
   return (
     <div className="w-full flex flex-col h-screen bg-primary">
@@ -24,6 +34,8 @@ const Layout = ({
         <Image src={logo} sizes="24px" alt="logo" />
         <div className="flex-1">
           <Input
+            value={searchParams.get("q") as string}
+            onChange={(e) => setSearchParams({ q: e.target.value })}
             placeholder="搜尋旅行..."
             prefix={<MaterialSymbol icon="search" className="text-white" />}
             variant="filled"

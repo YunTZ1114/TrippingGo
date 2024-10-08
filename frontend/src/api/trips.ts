@@ -2,6 +2,10 @@ import { baseInstance } from "./instance";
 import { APIRequestConfig, APIResponseData } from "./interface";
 import type { User } from "./users";
 
+export const keys = {
+  all: () => ["trips"],
+};
+
 type Creator = Omit<User, "email">;
 
 export type BaseTrip = {
@@ -26,15 +30,15 @@ export type Trip = BaseTrip & {
   updatedAt: string;
 };
 
-export enum Filter {
-  RECOMMEND = "recommend",
-  SAVED = "saved",
-  MINE = "mine",
+export enum TripFilter {
+  RECOMMEND = "RECOMMEND",
+  SAVED = "SAVED",
+  MINE = "MINE",
 }
 
 export const get = async ({
   params,
-}: APIRequestConfig<{ q?: string; filter?: Filter }>) => {
+}: APIRequestConfig<{ q?: string; filter?: TripFilter }>) => {
   const url = "/trips";
   const res = await baseInstance.get<APIResponseData<Trip[]>>(url, { params });
   return res.data.data;
