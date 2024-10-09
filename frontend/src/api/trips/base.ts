@@ -1,6 +1,6 @@
-import { baseInstance } from "./instance";
-import { APIRequestConfig, APIResponseData } from "./interface";
-import type { User } from "./users";
+import { baseInstance } from "../instance";
+import { APIRequestConfig, APIResponseData } from "../interface";
+import type { User } from "../users";
 
 export const keys = {
   all: () => ["trips"],
