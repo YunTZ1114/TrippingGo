@@ -6,7 +6,9 @@ export class UpdateTripMemberDto {
 
   @IsOptional()
   permissions: TripMemberPermissionDto[];
+}
 
+export class DeleteTripMemberDto {
   @IsOptional()
   deletedIds: number[];
 }

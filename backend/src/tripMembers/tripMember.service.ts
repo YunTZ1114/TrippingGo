@@ -80,15 +80,15 @@ export class TripMemberService {
       const role = (() => {
         switch (permissions) {
           case 0:
-            return 'Deleted';
+            return 'DELETED';
           case 1:
-            return 'Viewer';
+            return 'VIEWER';
           case 2:
-            return 'Editor';
+            return 'EDITOR';
           case 3:
-            return 'Creator';
+            return 'CREATOR';
           default:
-            return 'None';
+            return 'NONE';
         }
       })();
 
