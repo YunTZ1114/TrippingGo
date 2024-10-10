@@ -1,4 +1,5 @@
 import { IsNotEmpty, Min, Max, IsString, IsOptional, IsInt, IsObject } from 'class-validator';
+import { PermissionsText } from 'src/types/tripMember.type';
 
 export class UpdateTripMemberDto {
   @IsOptional()
@@ -6,11 +7,6 @@ export class UpdateTripMemberDto {
 
   @IsOptional()
   permissions: TripMemberPermissionDto[];
-}
-
-export class DeleteTripMemberDto {
-  @IsOptional()
-  deletedIds: number[];
 }
 
 export class TripMemberInfoDto {
@@ -36,6 +32,6 @@ export class TripMemberPermissionDto {
   @IsNotEmpty()
   @IsInt()
   @Min(0, { message: 'Permissions must be at least 0' })
-  @Max(4, { message: 'Permissions cannot be greater than 4' })
-  permissions: number;
+  @Max(3, { message: 'Permissions cannot be greater than 4' })
+  permissions: PermissionsText;
 }

@@ -1,5 +1,12 @@
 import { CommonFields } from './common.type';
 
+export enum PermissionsText {
+  DELETED = 0,
+  VIEWER = 1,
+  EDITOR = 2,
+  CREATOR = 3,
+}
+
 export interface BaseTripMember {
   id: number;
   nickname: string;

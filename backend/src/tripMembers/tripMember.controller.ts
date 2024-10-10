@@ -4,7 +4,8 @@ import { AuthGuard } from 'src/auth/auth.guard';
 import { RequiredPermission } from 'src/decorators/required-permission.decorator';
 import { TripMemberService } from './tripMember.service';
 import { TripGuard } from 'src/trips/trip.guard';
-import { DeleteTripMemberDto, UpdateTripMemberDto } from './tripMember.dto';
+import { UpdateTripMemberDto } from './tripMember.dto';
+import { PermissionsText } from 'src/types/tripMember.type';
 
 @Controller('trips/:tripId/trip-members')
 @UseGuards(AuthGuard, TripGuard)
@@ -15,14 +16,14 @@ export class TripMemberController {
   ) {}
 
   @Get('')
-  @RequiredPermission(2)
+  @RequiredPermission(PermissionsText.EDITOR)
   async getTrip(@Param('tripId') tripId: number) {
     const tripMembers = await this.tripMemberService.getTripMembers(tripId);
     return { data: tripMembers };
   }
 
   @Post('')
-  @RequiredPermission(3)
+  @RequiredPermission(PermissionsText.CREATOR)
   async createTripMembers(@Param('tripId') tripId: number, @Body('memberIds') memberIds: number[]) {
     if (memberIds?.length) await this.tripMemberService.createTripMembers(tripId, memberIds);
 
@@ -33,13 +34,13 @@ export class TripMemberController {
   }
 
   @Put('')
-  @RequiredPermission(2)
+  @RequiredPermission(PermissionsText.EDITOR)
   async updateTripMembers(@Request() req, @Param('tripId') tripId: number, @Body() updateTripMembers: UpdateTripMemberDto) {
     const { userId, userPermission } = req;
     const { info, permissions } = updateTripMembers;
 
     await this.databaseService.executeTransaction(async () => {
-      if (userPermission === 3) {
+      if (userPermission === PermissionsText.CREATOR) {
         const memberId = await this.tripMemberService.getTripMember(tripId, userId);
 
         const permissionsFilter = permissions?.filter(({ id }) => id !== memberId);
@@ -55,20 +56,15 @@ export class TripMemberController {
   }
 
   @Delete('')
-  @RequiredPermission(2)
-  async deleteTripMembers(@Request() req, @Param('tripId') tripId: number, @Body() deleteTripMemberDto: DeleteTripMemberDto) {
+  @RequiredPermission(PermissionsText.EDITOR)
+  async deleteTripMembers(@Request() req, @Body('memberId') memberId: number) {
     const { userId, userPermission } = req;
-    const { deletedIds } = deleteTripMemberDto;
 
-    await this.databaseService.executeTransaction(async () => {
-      if (userPermission === 3) {
-        const memberId = await this.tripMemberService.getTripMember(tripId, userId);
+    if (userPermission === PermissionsText.CREATOR && userId !== memberId) {
+      await this.tripMemberService.deleteTripMembers([memberId]);
+    }
 
-        const deletedIdsFilter = deletedIds?.filter((id) => id !== memberId);
-
-        if (deletedIdsFilter) await this.tripMemberService.deleteTripMembers(deletedIdsFilter);
-      }
-    });
+    if (userPermission !== PermissionsText.CREATOR && userId === memberId) await this.tripMemberService.deleteTripMembers([memberId]);
 
     return {
       message: 'Delete members in trip successfully',

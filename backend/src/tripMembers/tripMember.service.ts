@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { isNumber } from 'class-validator';
 import { DatabaseService } from 'src/database/database.service';
-import { BaseTripMember } from 'src/types/tripMember.type';
+import { BaseTripMember, PermissionsText } from 'src/types/tripMember.type';
 
 @Injectable()
 export class TripMemberService {
@@ -79,13 +79,13 @@ export class TripMemberService {
 
       const role = (() => {
         switch (permissions) {
-          case 0:
+          case PermissionsText.DELETED:
             return 'DELETED';
-          case 1:
+          case PermissionsText.VIEWER:
             return 'VIEWER';
-          case 2:
+          case PermissionsText.EDITOR:
             return 'EDITOR';
-          case 3:
+          case PermissionsText.CREATOR:
             return 'CREATOR';
           default:
             return 'NONE';
@@ -127,7 +127,7 @@ export class TripMemberService {
     );
   }
 
-  async updateTripMemberPermission(permissionUpdates: { id: number; permissions: number }[]) {
+  async updateTripMemberPermission(permissionUpdates: { id: number; permissions: PermissionsText }[]) {
     await Promise.all(
       permissionUpdates.map(({ id, permissions }) =>
         this.databaseService.tripMember.update({
@@ -141,7 +141,7 @@ export class TripMemberService {
   async deleteTripMembers(ids: number[]) {
     const updatedMembers = await this.databaseService.tripMember.updateMany({
       where: { id: { in: ids } },
-      data: { isDeleted: true, permissions: 0 },
+      data: { isDeleted: true, permissions: PermissionsText.DELETED },
     });
 
     return updatedMembers.count;
