@@ -29,13 +29,23 @@ export const antdTheme: ConfigProviderProps["theme"] = {
       colorPrimaryBorder: colors.surfaceLight,
     },
     Button: {
-      defaultBorderColor: colors.text,
+      defaultBg: "transparent",
+      defaultHoverBg: "transparent",
+      defaultActiveBg: "transparent",
+      defaultBorderColor: colors.primary.base,
+      defaultColor: colors.primary.base,
     },
     Modal: {
       borderRadiusLG: 16,
       titleFontSize: 28,
       titleLineHeight: 2,
       padding: 36,
+    },
+    Table: {
+      colorBgContainer: "transparent",
+      rowHoverBg: "transparent",
+      headerBg: "transparent",
+      borderColor: colors.white,
     },
   },
 };

@@ -2,7 +2,7 @@ import { baseInstance } from "../instance";
 import { APIRequestConfig, APIResponseData } from "../interface";
 import type { User } from "../users";
 
-export const keys = {
+export const baseKeys = {
   all: () => ["trips"],
 };
 
@@ -52,3 +52,11 @@ export const post = async ({ data }: APIRequestConfig<never, BaseTrip>) => {
   );
   return res.data.data;
 };
+
+// export const getTripDetail = async ({
+//   params,
+// }: APIRequestConfig<{ q?: string; filter?: TripFilter }>) => {
+//   const url = "/trips";
+//   const res = await baseInstance.get<APIResponseData<Trip[]>>(url, { params });
+//   return res.data.data;
+// };

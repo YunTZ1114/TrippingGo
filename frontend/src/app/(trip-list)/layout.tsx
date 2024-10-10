@@ -1,15 +1,15 @@
 "use client";
-import "./styles.css";
+
+import { Avatar } from "antd";
+import Image from "next/image";
+import { redirect } from "next/navigation";
 import { api } from "@/api";
 import { logo } from "@/assets";
 import { Input } from "@/components";
 import { MaterialSymbol } from "@/components/MaterialSymbol";
 import { useSearchParams } from "@/hooks";
 import { useQuery } from "@tanstack/react-query";
-import { Avatar } from "antd";
-import Image from "next/image";
-import { redirect } from "next/navigation";
-import { useCallback } from "react";
+import "./styles.css";
 
 const Layout = ({
   children,
@@ -23,10 +23,7 @@ const Layout = ({
     queryFn: api.users.me,
   });
 
-  if (userMe.error) {
-    redirect("/login");
-  }
-  console.log(userMe.error);
+  if (userMe.error) redirect("/login");
 
   return (
     <div className="w-full flex flex-col h-screen bg-primary">
