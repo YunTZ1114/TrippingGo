@@ -36,7 +36,7 @@ const items = [
     ],
   },
   {
-    key: "reserve",
+    key: "reservation",
     icon: <MaterialSymbol fill icon="event" />,
     label: "預約資訊",
   },

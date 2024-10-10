@@ -13,7 +13,7 @@ export class UserController {
 
     const user = await this.userService.getUser(userId);
 
-    return user;
+    return { data: user };
   }
 
   @Get('')
