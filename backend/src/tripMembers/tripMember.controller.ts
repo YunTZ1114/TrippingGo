@@ -55,16 +55,16 @@ export class TripMemberController {
     };
   }
 
-  @Delete('')
+  @Delete('tripMemberId')
   @RequiredPermission(PermissionsText.EDITOR)
-  async deleteTripMembers(@Request() req, @Body('memberId') memberId: number) {
+  async deleteTripMembers(@Request() req, @Param('tripMemberId') tripMemberId: number) {
     const { userId, userPermission } = req;
 
-    if (userPermission === PermissionsText.CREATOR && userId !== memberId) {
-      await this.tripMemberService.deleteTripMembers([memberId]);
+    if (userPermission === PermissionsText.CREATOR && userId !== tripMemberId) {
+      await this.tripMemberService.deleteTripMembers([tripMemberId]);
     }
 
-    if (userPermission !== PermissionsText.CREATOR && userId === memberId) await this.tripMemberService.deleteTripMembers([memberId]);
+    if (userPermission !== PermissionsText.CREATOR && userId === tripMemberId) await this.tripMemberService.deleteTripMembers([tripMemberId]);
 
     return {
       message: 'Delete members in trip successfully',
