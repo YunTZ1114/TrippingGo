@@ -7,7 +7,7 @@ export const Loading = ({
   colorClass?: string;
 }) => {
   return (
-    <div className="h-full w-full flex-1 flex items-center justify-center">
+    <div className="flex h-full w-full flex-1 items-center justify-center">
       <MaterialSymbol
         icon="progress_activity"
         className={classNames(colorClass, "animate-spin")}

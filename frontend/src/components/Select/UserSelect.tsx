@@ -20,7 +20,7 @@ const UserLabel = ({ name, avatar, email }: User) => (
 
 const UserTag = ({ name, avatar, onClose }: User & { onClose: () => void }) => (
   <div
-    className="flex bg-gray-200 gap-2 items-center p-1 rounded-full my-1 mr-1"
+    className="my-1 mr-1 flex items-center gap-2 rounded-full bg-gray-200 p-1"
     onClick={(e) => e.stopPropagation()}
   >
     <Avatar
@@ -35,7 +35,7 @@ const UserTag = ({ name, avatar, onClose }: User & { onClose: () => void }) => (
         e.stopPropagation();
         onClose();
       }}
-      className="rounded-full hover:bg-gray-400/50 transition-all p-[2px] cursor-pointer flex"
+      className="flex cursor-pointer rounded-full p-[2px] transition-all hover:bg-gray-400/50"
     >
       <MaterialSymbol icon="close" size={20} />
     </div>

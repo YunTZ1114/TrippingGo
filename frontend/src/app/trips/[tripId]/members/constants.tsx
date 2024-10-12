@@ -13,11 +13,11 @@ export const ROLE_OPTIONS = Object.entries(MAP_ROLE_TO_TEXT).map(
   ([key, value]) => ({
     label: value,
     value: key,
-  })
+  }),
 );
 
 export const TableColumns = (
-  customKey: string[]
+  customKey: string[],
 ): TableColumnType<Member>[] => [
   {
     title: "成員",
@@ -53,7 +53,7 @@ export const TableColumns = (
 
 export const EditTableColumns = (
   customKey: string[],
-  onDelete: (data: Member) => void
+  onDelete: (data: Member) => void,
 ): TableColumnType<Member>[] => [
   {
     title: "成員",
@@ -121,7 +121,7 @@ export const EditTableColumns = (
       ) : (
         <MaterialSymbol
           onClick={() => onDelete(data)}
-          className="rounded-full text-red-500 hover:bg-red-500/20 cursor-pointer"
+          className="cursor-pointer rounded-full text-red-500 hover:bg-red-500/20"
           icon="delete"
         />
       ),

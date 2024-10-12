@@ -82,7 +82,7 @@ export const SideBar = () => {
 
   return (
     <div className="w-[300px]">
-      <div className="w-full flex text-white items-center justify-between px-4 mb-4">
+      <div className="mb-4 flex w-full items-center justify-between px-4 text-white">
         <Link href="/">
           <Image src={logo} sizes="12px" alt="logo" />
         </Link>
@@ -96,11 +96,11 @@ export const SideBar = () => {
           />
         </div>
       </div>
-      <div className="pl-6 pr-2 mb-4 text-title-large text-white">
+      <div className="mb-4 pl-6 pr-2 text-title-large text-white">
         京阪6天5夜秋季日本行可以換行歐
       </div>
       <div className="mx-6">
-        <Divider className="border-white/30 border-t-2" />
+        <Divider className="border-t-2 border-white/30" />
       </div>
       <ConfigProvider
         theme={{

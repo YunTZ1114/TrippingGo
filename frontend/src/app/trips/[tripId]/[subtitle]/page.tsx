@@ -4,14 +4,14 @@ import { MaterialSymbol } from "@/components/MaterialSymbol";
 
 const TmpPage = ({ params }: { params: { subtitle: string } }) => {
   return (
-    <div className="flex flex-col h-full pt-7 px-10">
+    <div className="flex h-full flex-col px-10 pt-7">
       {/* 上方資訊欄 */}
       <div className="flex gap-2">
         <div className="w-full">
           <div className="text-headline-large font-bold">
             {params.subtitle.toUpperCase()}
           </div>
-          <div className="text-body-large mt-5">一串介紹的文字</div>
+          <div className="mt-5 text-body-large">一串介紹的文字</div>
         </div>
 
         <div>
@@ -31,13 +31,13 @@ const TmpPage = ({ params }: { params: { subtitle: string } }) => {
           prefix={<MaterialSymbol icon="search" />}
           variant="filled"
           size="large"
-          className="bg-white border-none rounded-full max-w-[300px]"
+          className="max-w-[300px] rounded-full border-none bg-white"
         />
       </div>
       {/* 內容 */}
-      <div className="mt-5 flex-[1_1_0] h-0 overflow-auto flex flex-col gap-2">
+      <div className="mt-5 flex h-0 flex-[1_1_0] flex-col gap-2 overflow-auto">
         {new Array(100).fill("").map((_, index) => (
-          <div className="bg-white p-5 rounded-lg">框框 {index}</div>
+          <div className="rounded-lg bg-white p-5">框框 {index}</div>
         ))}
       </div>
     </div>

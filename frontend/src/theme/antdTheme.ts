@@ -3,6 +3,7 @@ import { colors } from "./colors";
 
 export const antdTheme: ConfigProviderProps["theme"] = {
   token: {
+    fontFamily: "inter",
     colorPrimary: colors.primary.base,
     colorPrimaryHover: colors.primary.hover,
     colorLink: colors.primary.base,

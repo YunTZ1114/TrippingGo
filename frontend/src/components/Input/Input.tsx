@@ -6,7 +6,7 @@ export interface InputProps extends AntInputProps {}
 export const Input = forwardRef(
   ({ ...props }: InputProps, ref: React.LegacyRef<InputRef>) => {
     return <AntInput ref={ref} {...props} />;
-  }
+  },
 );
 
 Input.displayName = "Input";

@@ -14,20 +14,20 @@ const AuthLayout = ({
 }>) => {
   return (
     <div
-      className="w-full h-screen bg-cover bg-right flex"
+      className="flex h-screen w-full bg-cover bg-right"
       style={{ backgroundImage: getBackgroundImage("/default-cover.jpeg") }}
     >
-      <div className="p-[50px] overflow-auto hide-scroll-bar">
-        <div className="w-[500px] bg-white rounded-2xl min-h-[680px] shadow-lg p-[50px] flex flex-col gap-5">
+      <div className="hide-scroll-bar overflow-auto p-[50px]">
+        <div className="flex min-h-[680px] w-[500px] flex-col gap-5 rounded-2xl bg-white p-[50px] shadow-lg">
           {children}
         </div>
       </div>
 
-      <div className="flex flex-col flex-1 py-[50px]">
-        <div className="text-4xl font-extrabold text-primary mb-10">
+      <div className="flex flex-1 flex-col py-[50px]">
+        <div className="mb-10 text-4xl font-extrabold text-primary">
           Tripping GO!
         </div>
-        <div className="text-display-large whitespace-pre-wrap flex h-full items-center justify-center font-extrabold text-white">
+        <div className="flex h-full items-center justify-center whitespace-pre-wrap text-display-large font-extrabold text-white">
           {titleText}
         </div>
       </div>
