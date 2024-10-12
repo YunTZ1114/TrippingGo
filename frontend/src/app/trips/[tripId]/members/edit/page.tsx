@@ -91,12 +91,12 @@ const MembersPage = ({ params }: { params: { tripId: number } }) => {
   };
 
   return (
-    <div className="flex flex-col h-full pt-7 px-10">
+    <div className="flex h-full flex-col px-10 pt-7">
       {/* 上方資訊欄 */}
       <div className="flex gap-2">
         <div className="w-full">
           <div className="text-headline-large font-bold">成員</div>
-          <div className="text-body-large mt-5">一串介紹的文字</div>
+          <div className="mt-5 text-body-large">一串介紹的文字</div>
         </div>
 
         <div className="flex gap-2">
@@ -114,7 +114,7 @@ const MembersPage = ({ params }: { params: { tripId: number } }) => {
           </Button>
         </div>
       </div>
-      <div className="mt-5 flex-[1_1_0] h-0 overflow-auto flex flex-col gap-2">
+      <div className="mt-5 flex h-0 flex-[1_1_0] flex-col gap-2 overflow-auto">
         {(() => {
           if (isLoading) return <Loading colorClass="text-gray-400" />;
           return (

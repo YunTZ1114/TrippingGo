@@ -14,7 +14,7 @@ export const NavBar = () => {
   });
 
   return (
-    <div className="w-full flex text-white items-center gap-4 p-2">
+    <div className="flex w-full items-center gap-4 p-2 text-white">
       <Image src={logo} sizes="24px" alt="logo" />
       <div className="flex-1">
         <Input
@@ -22,7 +22,7 @@ export const NavBar = () => {
           prefix={<MaterialSymbol icon="search" className="text-white" />}
           variant="filled"
           size="large"
-          className="bg-white/40 border-none rounded-full search-input"
+          className="search-input rounded-full border-none bg-white/40"
         />
       </div>
       <MaterialSymbol icon="language" />

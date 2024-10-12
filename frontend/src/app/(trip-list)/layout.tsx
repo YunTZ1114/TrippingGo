@@ -26,8 +26,8 @@ const Layout = ({
   if (userMe.error) redirect("/login");
 
   return (
-    <div className="w-full flex flex-col h-screen bg-primary">
-      <div className="w-full flex text-white items-center gap-4 py-2 px-10">
+    <div className="flex h-screen w-full flex-col bg-primary">
+      <div className="flex w-full items-center gap-4 px-10 py-2 text-white">
         <Image src={logo} sizes="24px" alt="logo" />
         <div className="flex-1">
           <Input
@@ -37,7 +37,7 @@ const Layout = ({
             prefix={<MaterialSymbol icon="search" className="text-white" />}
             variant="filled"
             size="large"
-            className="bg-white/40 border-none rounded-full search-input"
+            className="search-input rounded-full border-none bg-white/40"
           />
         </div>
         <MaterialSymbol icon="language" />
@@ -49,8 +49,8 @@ const Layout = ({
           size={32}
         />
       </div>
-      <div className="flex-1 mt-2">
-        <div className="p-10 h-full mx-10 rounded-t-2xl bg-surface shadow-paper">
+      <div className="mt-2 flex-1">
+        <div className="mx-10 h-full rounded-t-2xl bg-surface p-10 shadow-paper">
           {children}
         </div>
       </div>

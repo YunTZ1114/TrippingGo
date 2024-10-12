@@ -1,13 +1,10 @@
 "use client";
 
-import { Button } from "@/components";
 import { MaterialSymbol } from "@/components/MaterialSymbol";
-import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { useEffect } from "react";
 
 const VerifySignup = () => {
-  const router = useRouter();
   const searchParams = useSearchParams();
 
   useEffect(() => {
@@ -17,12 +14,10 @@ const VerifySignup = () => {
   }, [searchParams]);
 
   return (
-    <>
-      <div className="flex flex-col items-center text-gray-500 text-display-medium font-extrabold">
-        <MaterialSymbol size={120} className="animate-spin" icon="sync" />
-        驗證中
-      </div>
-    </>
+    <div className="flex flex-col items-center text-display-medium font-extrabold text-gray-500">
+      <MaterialSymbol size={120} className="animate-spin" icon="sync" />
+      驗證中
+    </div>
   );
 };
 

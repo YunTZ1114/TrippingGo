@@ -102,7 +102,7 @@ export const NewTripModal = ({
       </Form>
       <Button
         type="primary"
-        className="w-full rounded-full mt-5"
+        className="mt-5 w-full rounded-full"
         size="large"
         loading={postTripAction.isPending}
         onClick={() => {

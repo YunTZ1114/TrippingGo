@@ -41,12 +41,12 @@ export const DeleteConfineModal = ({
       <div className="mb-5 text-center text-[36px] font-bold text-red-500">
         移除確認
       </div>
-      <div className="text-body-large text-center text-gray-400">
+      <div className="text-center text-body-large text-gray-400">
         確定要把
         <span className="font-bold text-gray-600">「{state?.userName}」</span>
         從旅程移除嗎
       </div>
-      <div className="flex justify-center mt-5 gap-2">
+      <div className="mt-5 flex justify-center gap-2">
         <Button type="default" size="large" onClick={onClose}>
           取消
         </Button>

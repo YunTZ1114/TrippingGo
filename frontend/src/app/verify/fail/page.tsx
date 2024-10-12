@@ -5,7 +5,7 @@ import Link from "next/link";
 const VerifyFail = () => {
   return (
     <>
-      <div className="flex flex-col items-center text-red-600 text-display-medium font-extrabold">
+      <div className="flex flex-col items-center text-display-medium font-extrabold text-red-600">
         <MaterialSymbol size={120} icon="warning" />
         連結已失效
       </div>

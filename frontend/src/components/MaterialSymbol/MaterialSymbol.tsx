@@ -36,7 +36,7 @@ export const MaterialSymbol = forwardRef<HTMLSpanElement, MaterialSymbolProps>(
     const className = classNames(
       originalClassName,
       `${originalClassName}-${icon}`,
-      propClassName
+      propClassName,
     );
 
     const style = { ...propStyle };
@@ -65,5 +65,5 @@ export const MaterialSymbol = forwardRef<HTMLSpanElement, MaterialSymbolProps>(
         {icon}
       </span>
     );
-  }
+  },
 );
