@@ -1,6 +1,9 @@
 import { IsDateString, IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class ReservationDto {
+  @IsNumber()
+  tripMemberId: number;
+
   @IsString()
   type: string;
 
