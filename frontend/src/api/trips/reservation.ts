@@ -37,3 +37,16 @@ export const postReservations = async ({
   const res = await baseInstance.post<APIResponseData<number>>(url, data);
   return res.data.data;
 };
+
+export const putReservations = async ({
+  pathParams,
+  data,
+}: APIRequestConfig<
+  never,
+  BaseReservation,
+  { tripId: number; reservationId: number }
+>) => {
+  const url = `/trips/${pathParams?.tripId}/reservations/${pathParams?.reservationId}`;
+  const res = await baseInstance.put<APIResponseData<number>>(url, data);
+  return res.data.data;
+};
