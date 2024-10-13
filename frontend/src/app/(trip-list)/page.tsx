@@ -52,12 +52,12 @@ const Home = () => {
         }
       />
       {(() => {
-        if (isLoading) return <Loading />;
+        if (isLoading) return <Loading colorClass="text-gray-400" />;
         return trips?.map(({ id, name, description }) => (
           <Link href={`/trips/${id}`} key={id}>
-            <div className="bg-white rounded-lg p-4">
+            <div className="rounded-lg bg-white p-4">
               <div className="text-label-large">{name}</div>
-              <div className="text-body-medium text-gray-500 mt-2">
+              <div className="mt-2 text-body-medium text-gray-500">
                 {description}
               </div>
             </div>

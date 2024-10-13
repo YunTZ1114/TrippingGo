@@ -8,6 +8,11 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      typography: () => ({
+        blue: {
+          css: { "--tw-prose-bullets": "#000000" },
+        },
+      }),
       boxShadow: {
         paper: "-10px 16px 0px 4px #D66B5C;",
       },
@@ -94,7 +99,7 @@ const config: Config = {
         "label-large": [
           "16px",
           {
-            fontWeight: "500",
+            fontWeight: "600",
             lineHeight: "1.42",
             letterSpacing: "0.1px",
           },
@@ -102,7 +107,7 @@ const config: Config = {
         "label-medium": [
           "14px",
           {
-            fontWeight: "500",
+            fontWeight: "600",
             lineHeight: "1.32",
             letterSpacing: "0.5px",
           },
@@ -110,7 +115,7 @@ const config: Config = {
         "label-small": [
           "12px",
           {
-            fontWeight: "500",
+            fontWeight: "600",
             lineHeight: "1.42",
             letterSpacing: "0.5px",
           },
@@ -118,7 +123,7 @@ const config: Config = {
         "title-large": [
           "22px",
           {
-            fontWeight: "500",
+            fontWeight: "600",
             lineHeight: "1.26",
             letterSpacing: "normal",
           },
@@ -126,7 +131,7 @@ const config: Config = {
         "title-medium": [
           "16px",
           {
-            fontWeight: "500",
+            fontWeight: "600",
             lineHeight: "1.5",
             letterSpacing: "0.1px",
           },
@@ -134,7 +139,7 @@ const config: Config = {
         "title-small": [
           "14px",
           {
-            fontWeight: "500",
+            fontWeight: "600",
             lineHeight: "1.42",
             letterSpacing: "0.1px",
           },
@@ -142,6 +147,6 @@ const config: Config = {
       },
     },
   },
-  plugins: [],
+  plugins: [require("@tailwindcss/typography")],
 };
 export default config;

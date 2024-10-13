@@ -25,6 +25,7 @@ export class TripMemberService {
       where: {
         userId: { in: users.map((user) => user.id) },
         tripId: tripId,
+        isDeleted: false
       },
       select: {
         userId: true,
@@ -71,6 +72,7 @@ export class TripMemberService {
         },
       },
       where: { tripId: tripId, isDeleted: false },
+      orderBy: { id: 'asc' }
     });
 
     const formattedTripMembers = tripMembers.map((member) => {
@@ -132,7 +134,7 @@ export class TripMemberService {
       permissionUpdates.map(({ id, permissions }) =>
         this.databaseService.tripMember.update({
           where: { id },
-          data: { permissions },
+          data: { permissions: Number(PermissionsText[permissions]) },
         }),
       ),
     );
@@ -150,7 +152,7 @@ export class TripMemberService {
   async deleteAllTripMembers(tripId: number) {
     const updatedMembers = await this.databaseService.tripMember.updateMany({
       where: { tripId },
-      data: { isDeleted: true, permissions: 0 },
+      data: { isDeleted: true, permissions: PermissionsText.DELETED },
     });
 
     return updatedMembers.count;

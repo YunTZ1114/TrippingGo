@@ -1,4 +1,4 @@
-import type { FontDp, FontGrade, FontWeight } from './interface';
+import type { FontDp, FontGrade, FontWeight } from "./interface";
 
 interface Param {
   fill?: boolean;
@@ -12,16 +12,16 @@ export const buildFontVariationSettingsStyle = ({
   grade,
   dp,
 }: Param) => {
-  let fontVariationSettingsStyle = '';
+  let fontVariationSettingsStyle = "";
 
   if (fill)
     fontVariationSettingsStyle = [fontVariationSettingsStyle, `'FILL' 1`]
       .filter(Boolean)
-      .join(', ');
+      .join(", ");
   else
     fontVariationSettingsStyle = [fontVariationSettingsStyle, `'FILL' 0`]
       .filter(Boolean)
-      .join(', ');
+      .join(", ");
 
   if (weight)
     fontVariationSettingsStyle = [
@@ -29,17 +29,17 @@ export const buildFontVariationSettingsStyle = ({
       `'wght' ${weight}`,
     ]
       .filter(Boolean)
-      .join(', ');
+      .join(", ");
 
   if (grade !== undefined)
     fontVariationSettingsStyle = [fontVariationSettingsStyle, `'GRAD' ${grade}`]
       .filter(Boolean)
-      .join(', ');
+      .join(", ");
 
   if (dp) {
     fontVariationSettingsStyle = [fontVariationSettingsStyle, `'opsz' ${dp}`]
       .filter(Boolean)
-      .join(', ');
+      .join(", ");
   }
 
   return fontVariationSettingsStyle;

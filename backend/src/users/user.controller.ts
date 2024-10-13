@@ -22,6 +22,6 @@ export class UserController {
 
     const users = await this.userService.getUsers(q, limit, userId);
 
-    return users;
+    return {data : users};
   }
 }

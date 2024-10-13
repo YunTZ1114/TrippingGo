@@ -18,7 +18,7 @@ export const useSearchParams = () => {
       });
       router.replace(`${pathname}?${params.toString()}`);
     },
-    [searchParams]
+    [searchParams],
   );
 
   return { searchParams, setSearchParams };

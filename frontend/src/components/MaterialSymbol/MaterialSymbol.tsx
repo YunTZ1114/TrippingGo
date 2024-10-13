@@ -1,4 +1,4 @@
-import React from "react";
+import React, { forwardRef } from "react";
 import { FontDp, FontGrade, FontType, FontWeight } from "./interface";
 import { buildFontVariationSettingsStyle } from "./utils";
 import { classNames } from "@/utils";
@@ -17,45 +17,53 @@ interface MaterialSymbolProps extends React.HTMLAttributes<HTMLSpanElement> {
  * Material symbols
  * @see {@link https://fonts.google.com/icons}
  */
-export const MaterialSymbol = (props: MaterialSymbolProps) => {
-  const {
-    type = "rounded",
-    icon,
-    fill,
-    weight = 400,
-    grade = 0,
-    dp = 24,
-    size = 24,
-    className: propClassName,
-    style: propStyle,
-    ...elementProps
-  } = props;
+export const MaterialSymbol = forwardRef<HTMLSpanElement, MaterialSymbolProps>(
+  (props, ref) => {
+    const {
+      type = "rounded",
+      icon,
+      fill,
+      weight = 400,
+      grade = 0,
+      dp = 24,
+      size = 24,
+      className: propClassName,
+      style: propStyle,
+      ...elementProps
+    } = props;
 
-  const originalClassName = `material-symbols-${type}`;
-  const className = classNames(
-    originalClassName,
-    `${originalClassName}-${icon}`,
-    propClassName
-  );
+    const originalClassName = `material-symbols-${type}`;
+    const className = classNames(
+      originalClassName,
+      `${originalClassName}-${icon}`,
+      propClassName,
+    );
 
-  const style = { ...propStyle };
-  if (size) {
-    style.fontSize = size;
-    // fixed the width and height to prevent the inconsistent style when font is loading
-    style.maxWidth = size;
-    style.maxHeight = size;
-  }
+    const style = { ...propStyle };
+    if (size) {
+      style.fontSize = size;
+      // fixed the width and height to prevent the inconsistent style when font is loading
+      style.maxWidth = size;
+      style.maxHeight = size;
+    }
 
-  style.fontVariationSettings = buildFontVariationSettingsStyle({
-    fill,
-    weight,
-    grade,
-    dp,
-  });
+    style.fontVariationSettings = buildFontVariationSettingsStyle({
+      fill,
+      weight,
+      grade,
+      dp,
+    });
 
-  return (
-    <span {...elementProps} className={className} style={style} translate="no">
-      {icon}
-    </span>
-  );
-};
+    return (
+      <span
+        ref={ref}
+        {...elementProps}
+        className={className}
+        style={style}
+        translate="no"
+      >
+        {icon}
+      </span>
+    );
+  },
+);

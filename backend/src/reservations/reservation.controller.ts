@@ -16,14 +16,13 @@ export class ReservationController {
     const { tripId } = req;
     const reservations = await this.reservationService.getReservations(tripId);
 
-    return { data: { reservations } };
+    return { data: reservations };
   }
 
   @Post('')
   @RequiredPermission(2)
   async createReservation(@Request() req, @Body() reservationDto: ReservationDto) {
-    const { tripMemberId } = req;
-    const reservationId = await this.reservationService.createReservation({ tripMemberId, ...reservationDto });
+    const reservationId = await this.reservationService.createReservation(reservationDto);
 
     return { data: { reservationId } };
   }

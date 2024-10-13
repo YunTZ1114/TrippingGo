@@ -18,6 +18,7 @@ import { useRouter } from "next/navigation";
 import { getErrorMessage } from "@/api/utils";
 import { MaterialSymbol } from "@/components/MaterialSymbol";
 import { useMutation } from "@tanstack/react-query";
+import { baseInstance } from "@/api/instance";
 
 type FormData = { email: string; password: string; stayLoggedIn: boolean };
 
@@ -39,6 +40,9 @@ const Login = () => {
     },
     onSuccess: (success) => {
       localStorage.setItem("token", success.token);
+      baseInstance.defaults.headers.common[
+        "Authorization"
+      ] = `Bearer ${success.token}`;
       showAlert({ type: "success", message: "登入成功" });
       router.push("/");
     },

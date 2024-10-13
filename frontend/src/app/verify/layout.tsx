@@ -8,7 +8,7 @@ const VerifyLayout = ({
 }>) => {
   return (
     <div
-      className="w-full h-screen bg-cover bg-right flex"
+      className="flex h-screen w-full bg-cover bg-right"
       style={{ backgroundImage: getBackgroundImage("/default-cover.jpeg") }}
     >
       <div className="hide-scrollbar flex h-full w-full justify-center overflow-auto p-[50px]">
