@@ -1,0 +1,39 @@
+import { baseInstance } from "../instance";
+import { APIRequestConfig, APIResponseData } from "../interface";
+
+export const reservationsKeys = {
+  reservation: (tripId: number) => ["trips", tripId, "reservation"] as const,
+};
+
+export interface BaseReservation {
+  type: string;
+  title: string;
+  reservationTime: Date;
+  endTime?: Date;
+  tripMemberId: number;
+  amount: number;
+  note?: string;
+  description?: string;
+}
+
+export interface Reservation extends BaseReservation {
+  id: number;
+  updatedAt: Date;
+}
+
+export const getReservations = async ({
+  pathParams,
+}: APIRequestConfig<never, never, { tripId: number }>) => {
+  const url = `/trips/${pathParams?.tripId}/reservations`;
+  const res = await baseInstance.get<APIResponseData<Reservation[]>>(url);
+  return res.data.data;
+};
+
+export const postReservations = async ({
+  pathParams,
+  data,
+}: APIRequestConfig<never, BaseReservation, { tripId: number }>) => {
+  const url = `/trips/${pathParams?.tripId}/reservations`;
+  const res = await baseInstance.post<APIResponseData<number>>(url, data);
+  return res.data.data;
+};
