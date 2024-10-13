@@ -25,6 +25,7 @@ export class TripMemberService {
       where: {
         userId: { in: users.map((user) => user.id) },
         tripId: tripId,
+        isDeleted: false
       },
       select: {
         userId: true,
@@ -71,6 +72,7 @@ export class TripMemberService {
         },
       },
       where: { tripId: tripId, isDeleted: false },
+      orderBy: { id: 'asc' }
     });
 
     const formattedTripMembers = tripMembers.map((member) => {

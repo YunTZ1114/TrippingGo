@@ -55,7 +55,7 @@ export class TripMemberController {
     };
   }
 
-  @Delete('tripMemberId')
+  @Delete('/:tripMemberId')
   @RequiredPermission(PermissionsText.EDITOR)
   async deleteTripMembers(@Request() req, @Param('tripMemberId') tripMemberId: number) {
     const { userId, userPermission } = req;
