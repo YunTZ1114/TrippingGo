@@ -29,12 +29,14 @@ export const ReservationBlock = ({
             icon="edit"
             size={24}
           />
+
           <MaterialSymbol
             className="cursor-pointer"
             onClick={onCopy}
             icon="content_copy"
             size={24}
           />
+
           <MaterialSymbol
             className="cursor-pointer"
             onClick={onDelete}
@@ -109,7 +111,6 @@ export const ReservationBlock = ({
   return (
     <Collapse
       className="bg-white"
-      defaultActiveKey={["1"]}
       items={items}
       bordered={false}
       expandIcon={({ isActive }) => (

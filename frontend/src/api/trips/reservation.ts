@@ -9,7 +9,7 @@ export interface BaseReservation {
   type: string;
   title: string;
   reservationTime: Date;
-  endTime?: Date;
+  endTime?: Date | null;
   tripMemberId: number;
   amount: number;
   note?: string;
@@ -48,5 +48,17 @@ export const putReservations = async ({
 >) => {
   const url = `/trips/${pathParams?.tripId}/reservations/${pathParams?.reservationId}`;
   const res = await baseInstance.put<APIResponseData<number>>(url, data);
+  return res.data.data;
+};
+
+export const deleteReservations = async ({
+  pathParams,
+}: APIRequestConfig<
+  never,
+  never,
+  { tripId: number; reservationId: number }
+>) => {
+  const url = `/trips/${pathParams?.tripId}/reservations/${pathParams?.reservationId}`;
+  const res = await baseInstance.delete<APIResponseData<number>>(url);
   return res.data.data;
 };

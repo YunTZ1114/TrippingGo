@@ -8,7 +8,7 @@ import { useEffect, useState } from "react";
 import { ReservationForm } from "./ReservationForm";
 
 type FormData = Omit<BaseReservation, "reservationTime" | "endTime"> & {
-  time: { reservationTime: Dayjs; endTime: Dayjs; hasEndTime: boolean };
+  time: { reservationTime: Dayjs; endTime: Dayjs | null; hasEndTime: boolean };
 };
 
 export const AddReservationModal = ({
@@ -43,7 +43,7 @@ export const AddReservationModal = ({
       pathParams: { tripId },
       data: {
         reservationTime: reservationTime.toDate(),
-        endTime: endTime.toDate(),
+        endTime: endTime?.toDate(),
         ...value,
       },
     });

@@ -8,7 +8,7 @@ import { useEffect, useMemo, useState } from "react";
 import { ReservationForm } from "./ReservationForm";
 
 type FormData = Omit<BaseReservation, "reservationTime" | "endTime"> & {
-  time: { reservationTime: Dayjs; endTime: Dayjs; hasEndTime: boolean };
+  time: { reservationTime: Dayjs; endTime: Dayjs | null; hasEndTime: boolean };
 };
 
 export const EditReservationModal = ({
@@ -38,13 +38,13 @@ export const EditReservationModal = ({
 
   const handleFinish = ({ time, ...value }: FormData) => {
     if (!reservation) throw new Error("reservation need to be provide");
-    const { reservationTime, endTime } = time;
+    const { reservationTime, endTime, hasEndTime } = time;
 
     postReservationAction.mutate({
       pathParams: { tripId, reservationId: reservation?.id },
       data: {
         reservationTime: reservationTime.toDate(),
-        endTime: endTime.toDate(),
+        endTime: hasEndTime ? endTime?.toDate() : null,
         ...value,
       },
     });
@@ -92,7 +92,7 @@ export const EditReservationModal = ({
           form.submit();
         }}
       >
-        新增
+        編輯
       </Button>
     </Modal>
   );
