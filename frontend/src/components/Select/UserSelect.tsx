@@ -8,7 +8,15 @@ import { Avatar } from "antd";
 import { useMemo, useState } from "react";
 import { Select, SelectProps } from "./Select";
 
-const UserLabel = ({ name, avatar, email }: User) => (
+export const UserLabel = ({
+  name,
+  avatar,
+  email,
+}: {
+  name: string;
+  avatar?: string;
+  email?: string;
+}) => (
   <div className="flex gap-2">
     <Avatar size={36} icon={name[0].toUpperCase()} src={avatar} />
     <div>
@@ -18,7 +26,11 @@ const UserLabel = ({ name, avatar, email }: User) => (
   </div>
 );
 
-const UserTag = ({ name, avatar, onClose }: User & { onClose: () => void }) => (
+export const UserTag = ({
+  name,
+  avatar,
+  onClose,
+}: User & { onClose: () => void }) => (
   <div
     className="my-1 mr-1 flex items-center gap-2 rounded-full bg-gray-200 p-1"
     onClick={(e) => e.stopPropagation()}

@@ -77,7 +77,7 @@ export const SideBar = () => {
   const router = useRouter();
   const pathname = usePathname();
   const params = useParams();
-  const pathMatch = pathname.match(/\/trips\/\d+\/(.+)?\//);
+  const pathMatch = pathname.match(/\/trips\/\d+\/([^/]+)/);
   const activeKey = pathMatch ? [pathMatch[1]] : undefined;
 
   return (
