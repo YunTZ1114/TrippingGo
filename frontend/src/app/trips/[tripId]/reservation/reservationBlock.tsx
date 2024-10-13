@@ -124,14 +124,17 @@ export const ReservationBlock = ({
             }}
           />
 
-          <div className="text-headline-small font-bold">
+          <span className="text-headline-small font-bold leading-none">
             {reservation.title}
-          </div>
-          <MaterialSymbol
-            icon="task_alt"
-            size={24}
-            className="text-[#35C3B8]"
-          />
+          </span>
+
+          {new Date(reservation.reservationTime) < new Date() ? (
+            <MaterialSymbol
+              icon="task_alt"
+              size={24}
+              className="text-[#35C3B8]"
+            />
+          ) : null}
         </div>
       )}
     />
