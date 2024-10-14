@@ -18,3 +18,12 @@ export const JWT_SECRET = process.env.JWT_SECRET;
 export const LINK_ENCRYPTION_KEY = process.env.LINK_ENCRYPTION_KEY;
 
 export const CLOUDMERSIVE_API_KEY = process.env.CLOUDMERSIVE_API_KEY;
+
+export const GOOGLE_OAUTH_ID = process.env.NEXT_PUBLIC_GOOGLE_OAUTH_ID
+
+export const GOOGLE_OAUTH_SECRET = process.env.GOOGLE_OAUTH_SECRET
+
+export const GOOGLE_MAP_API_KEY = process.env.GOOGLE_MAP_API_KEY
+
+
+

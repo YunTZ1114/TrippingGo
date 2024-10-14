@@ -12,7 +12,18 @@ export const login = async ({
   const url = "/auth/login";
   const res = await baseInstance.post<APIResponseData<{ token: string }>>(
     url,
-    data
+    data,
+  );
+  return res.data.data;
+};
+
+export const googleLogin = async ({
+  data,
+}: APIRequestConfig<never, { credential: string }>) => {
+  const url = "/auth/google-login";
+  const res = await baseInstance.post<APIResponseData<{ token: string }>>(
+    url,
+    data,
   );
   return res.data.data;
 };
@@ -77,7 +88,7 @@ export const resetPassword = async ({
   const res = await baseInstance.post<APIResponseData<{ message: string }>>(
     url,
     { password: data?.password },
-    { headers: { ["Authorization"]: `Bearer ${data?.token}` } }
+    { headers: { ["Authorization"]: `Bearer ${data?.token}` } },
   );
   return res.data;
 };

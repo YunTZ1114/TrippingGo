@@ -1,4 +1,5 @@
 import { BadRequestException, Body, Controller, Get, Post, Query, UseGuards, Request } from '@nestjs/common';
+import { OAuth2Client } from 'google-auth-library';
 import { validate } from 'class-validator';
 import { plainToClass } from 'class-transformer';
 import { LoginDto, SignUpDto } from './auth.dto';
@@ -6,8 +7,10 @@ import { AuthService } from './auth.service';
 import { TokenService } from 'src/utils/token';
 import { MailService } from '../mails/mail.service';
 import { EncryptionService } from 'src/utils/encrypt';
-import { TEST_MAIL, FE_URL } from 'src/config';
+import { TEST_MAIL, FE_URL, GOOGLE_OAUTH_ID } from 'src/config';
 import { AuthGuard } from './auth.guard';
+
+const client = new OAuth2Client(process.env.GOOGLE_OAUTH_ID);
 
 @Controller('auth')
 export class AuthController {
@@ -19,7 +22,7 @@ export class AuthController {
   ) {}
 
   @Post('login')
-  async getUser(@Body() loginDto: LoginDto) {
+  async login(@Body() loginDto: LoginDto) {
     const { email, password, stayLoggedIn } = loginDto;
 
     const user = await this.authService.getUserByEmail(email);
@@ -37,6 +40,32 @@ export class AuthController {
     }
 
     const loginDuration = stayLoggedIn ? 30 : 1;
+    const token = await this.tokenService.generateToken(user.id, email, loginDuration);
+
+    return { data: { token: token, name: user.name, avatar: user.avatar } };
+  }
+
+  @Post('google-login')
+  async getUser(@Body('credential') credential: string) {
+      const ticket = await client.verifyIdToken({
+        idToken: credential,
+        audience: process.env.GOOGLE_OAUTH_ID,
+      });
+
+      const payload = ticket.getPayload();
+      if (!payload) throw new BadRequestException('Invalid Google token.');
+      
+
+      const email = payload.email;
+      if (!email) throw new BadRequestException('Google login failed, no email found.');
+      
+
+    const user = await this.authService.getUserByEmail(email);
+    if (!user) throw new BadRequestException('User not found.');
+
+    if (!user.isVerified) throw new BadRequestException('The email is not verified yet.');
+
+    const loginDuration = 1;
     const token = await this.tokenService.generateToken(user.id, email, loginDuration);
 
     return { data: { token: token, name: user.name, avatar: user.avatar } };

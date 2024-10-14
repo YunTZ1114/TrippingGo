@@ -14,6 +14,9 @@ export class ReservationService {
         },
         isDeleted: false,
       },
+      orderBy: {
+        id: 'desc'
+      }
     });
 
     return reservations.map(({ isDeleted, createdAt, ...other }) => {

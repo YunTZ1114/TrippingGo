@@ -26,10 +26,13 @@ export class CheckListService {
           },
         ],
       },
+      orderBy:{
+        id:'desc'
+      }
     });
 
     const formattedCheckLists = checkLists.map(({ description, ...others }) => {
-      const formattedDescription = Object.fromEntries(Object.entries(description).map(([key, value]) => [key, value.includes(tripMemberId)]));
+      const formattedDescription = (Object.entries(description).map(([key, value]) => {return {text: key, checked: value.includes(tripMemberId)}} ));
       return { ...others, description: formattedDescription };
     });
 
