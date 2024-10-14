@@ -19,6 +19,11 @@ import { getErrorMessage } from "@/api/utils";
 import { MaterialSymbol } from "@/components/MaterialSymbol";
 import { useMutation } from "@tanstack/react-query";
 import { baseInstance } from "@/api/instance";
+import {
+  GoogleOAuthProvider,
+  GoogleLogin,
+  CredentialResponse,
+} from "@react-oauth/google";
 
 type FormData = { email: string; password: string; stayLoggedIn: boolean };
 
@@ -40,20 +45,53 @@ const Login = () => {
     },
     onSuccess: (success) => {
       localStorage.setItem("token", success.token);
-      baseInstance.defaults.headers.common[
-        "Authorization"
-      ] = `Bearer ${success.token}`;
+      baseInstance.defaults.headers.common["Authorization"] =
+        `Bearer ${success.token}`;
       showAlert({ type: "success", message: "登入成功" });
       router.push("/");
     },
   });
 
+  const googleLoginAction = useMutation({
+    mutationFn: api.auth.googleLogin,
+    onError: (error) => {
+      showAlert({
+        type: "error",
+        message: getErrorMessage(error, { 400: "查無此帳號" }),
+      });
+    },
+    onSuccess: (success) => {
+      localStorage.setItem("token", success.token);
+      baseInstance.defaults.headers.common["Authorization"] =
+        `Bearer ${success.token}`;
+      showAlert({ type: "success", message: "登入成功" });
+      router.push("/");
+    },
+  });
+
+  const handleLoginSuccess = async (res: CredentialResponse) => {
+    if (res.credential) {
+      googleLoginAction.mutate({ data: { credential: res.credential } });
+    }
+  };
+
   return (
     <>
       <div className="mb-5 text-headline-large">開始跟朋友規劃一段旅行吧！</div>
-      <Button className="w-full rounded-full" size="large">
-        使用Google帳號登入
-      </Button>
+      <GoogleOAuthProvider
+        clientId={`${process.env.NEXT_PUBLIC_GOOGLE_OAUTH_ID}`}
+      >
+        <div>
+          <GoogleLogin
+            shape="pill"
+            logo_alignment="center"
+            onSuccess={handleLoginSuccess}
+            onError={() => {
+              console.log("Login Failed");
+            }}
+          />
+        </div>
+      </GoogleOAuthProvider>
       <div className="flex items-center gap-3">
         <div className="w-full border-b border-b-gray-300" />
         或
