@@ -28,6 +28,9 @@ export const antdTheme: ConfigProviderProps["theme"] = {
       colorFillSecondary: colors.surfaceLight,
       selectorBg: colors.surfaceLight,
       colorPrimaryBorder: colors.surfaceLight,
+      colorBorder: colors.surfaceLight,
+      hoverBorderColor: colors.surfaceLight,
+      activeBorderColor: colors.surfaceLight,
     },
     Button: {
       defaultBg: "transparent",
@@ -47,6 +50,9 @@ export const antdTheme: ConfigProviderProps["theme"] = {
       rowHoverBg: "transparent",
       headerBg: "transparent",
       borderColor: colors.white,
+    },
+    Form: {
+      labelFontSize: 14,
     },
   },
 };
