@@ -18,23 +18,18 @@ body {
     text-wrap: balance;
   }
 }
-/* width */
+
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 10px;
+  height: 10px;
 }
-
-/* Track */
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-/* Handle */
 ::-webkit-scrollbar-thumb {
-  background: #a7a7a7;
-  border-radius: 5px;
+  background-color: transparent;
+  border-radius: 10px;
+  border: 2px solid transparent;
+  box-shadow: inset 0px 0px 0px 10px rgba(0, 0, 0, 0.15);
 }
 
-/* Handle on hover */
-::-webkit-scrollbar-thumb:hover {
-  background: #898989;
+::-webkit-scrollbar-track {
+  background-color: transparent;
 }
