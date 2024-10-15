@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { DatabaseService } from 'src/database/database.service';
 import { BaseTrip, TripPreview, TripFilterType } from 'src/types/trip.type';
 
@@ -8,6 +8,7 @@ export class TripService {
 
   async createTrip({ creatorId, name, description, currencyCode, startTime, endTime }: Omit<BaseTrip, 'id' | 'coverUrl'>) {
     const user = await this.databaseService.user.findUnique({ where: { id: creatorId } });
+    if (!user) throw new HttpException('User not found.', HttpStatus.NOT_FOUND);
 
     const trip = await this.databaseService.trip.create({
       data: { creatorId, name, description, currencyCode, startTime: new Date(startTime), endTime: new Date(endTime) },
@@ -81,7 +82,7 @@ export class TripService {
   async updateTrip({ id, name, description, currencyCode, startTime, endTime, coverUrl }: Omit<BaseTrip, 'creatorId'>) {
     const trip = await this.databaseService.trip.findUnique({ where: { id } });
 
-    if (!trip) throw new Error('The trip does not exist.');
+    if (!trip) throw new HttpException('The trip does not exist.', HttpStatus.NOT_FOUND);
 
     const updatedTrip = await this.databaseService.trip.update({
       where: { id, isDeleted: false },
@@ -101,7 +102,7 @@ export class TripService {
   async deleteTrip(id: number) {
     const trip = await this.databaseService.trip.findUnique({ where: { id } });
 
-    if (!trip) throw new Error('The trip does not exist.');
+    if (!trip) throw new HttpException('The trip does not exist.', HttpStatus.NOT_FOUND);
 
     const deleteTrip = await this.databaseService.trip.update({
       where: { id },

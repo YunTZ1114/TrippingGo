@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { isNumber } from 'class-validator';
 import { DatabaseService } from 'src/database/database.service';
 import { BaseTripMember, PermissionsText } from 'src/types/tripMember.type';
@@ -19,13 +19,13 @@ export class TripMemberService {
       },
     });
 
-    if (!users?.length) throw new Error('No valid users found for the provided member IDs.');
+    if (!users?.length) throw new HttpException('Invalid trip ID or user IDs.', HttpStatus.BAD_REQUEST);
 
     const originTripMembers = await this.databaseService.tripMember.findMany({
       where: {
         userId: { in: users.map((user) => user.id) },
         tripId: tripId,
-        isDeleted: false
+        isDeleted: false,
       },
       select: {
         userId: true,
@@ -42,13 +42,13 @@ export class TripMemberService {
         tripId: tripId,
       }));
 
-    if (!tripMembersData.length) throw new Error('No new members to add.');
+    if (!tripMembersData.length) throw new HttpException('No new members to add.', HttpStatus.NOT_MODIFIED);
 
     const tripMembers = await this.databaseService.tripMember.createMany({
       data: tripMembersData,
     });
 
-    if (tripMembers?.count === 0) throw new Error('Error creating trip members');
+    if (tripMembers?.count === 0) throw new HttpException('Error creating trip members', HttpStatus.INTERNAL_SERVER_ERROR);
 
     return [tripMembers];
   }
@@ -72,7 +72,7 @@ export class TripMemberService {
         },
       },
       where: { tripId: tripId, isDeleted: false },
-      orderBy: { id: 'asc' }
+      orderBy: { id: 'asc' },
     });
 
     const formattedTripMembers = tripMembers.map((member) => {
@@ -111,9 +111,8 @@ export class TripMemberService {
       select: { permissions: true, id: true },
     });
 
-    if (tripMember.length === 0 || !isNumber(tripMember[0]?.permissions)) {
-      throw new Error('Permissions not found or invalid.');
-    }
+    if (tripMember.length === 0 || !isNumber(tripMember[0]?.permissions))
+      throw new HttpException('Permissions not found or invalid.', HttpStatus.NOT_FOUND);
 
     return tripMember[0];
   }

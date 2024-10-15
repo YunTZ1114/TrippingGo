@@ -1,4 +1,4 @@
-import { Controller, Get, UseGuards, Request, Query } from '@nestjs/common';
+import { Controller, Get, UseGuards, Request, Query, HttpException, HttpStatus } from '@nestjs/common';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { UserService } from './user.service';
 
@@ -12,6 +12,7 @@ export class UserController {
     const { userId } = req;
 
     const user = await this.userService.getUser(userId);
+    if (!user) throw new HttpException('The user does not exist.', HttpStatus.NOT_FOUND);
 
     return { data: user };
   }
@@ -22,6 +23,6 @@ export class UserController {
 
     const users = await this.userService.getUsers(q, limit, userId);
 
-    return {data : users};
+    return { data: users };
   }
 }
