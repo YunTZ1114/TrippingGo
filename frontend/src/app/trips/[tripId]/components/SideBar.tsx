@@ -46,7 +46,7 @@ const items = [
     label: "行前準備",
   },
   {
-    key: "to-buy",
+    key: "shopping",
     icon: <MaterialSymbol fill icon="local_mall" />,
     label: "待買清單",
   },
