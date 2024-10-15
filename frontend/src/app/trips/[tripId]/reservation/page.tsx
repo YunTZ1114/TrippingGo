@@ -1,6 +1,5 @@
 "use client";
 import { api } from "@/api";
-import { Loading } from "@/components";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components";
 import { MaterialSymbol } from "@/components/MaterialSymbol";
@@ -9,6 +8,7 @@ import { useState } from "react";
 import { AddReservationModal, EditReservationModal } from "./modal";
 import { Reservation } from "@/api/trips";
 import { DeleteConfineModal } from "./modal/DeleteConfineModal";
+import { PageBlock } from "../components";
 
 enum ModalType {
   NEW = "new",
@@ -30,21 +30,14 @@ const ReservationPage = ({ params }: { params: { tripId: number } }) => {
       }),
   });
 
-  if (isLoading) {
-    return <Loading />;
-  }
-
   return (
-    <div className="flex h-full flex-col px-10 pt-7">
-      <div className="flex gap-2">
-        <div className="w-full">
-          <div className="text-headline-large font-bold">預約資訊</div>
-          <div className="mt-5 text-body-large">
-            包括購買門票、機票預訂、住宿安排和餐廳預約，它可以幫助您記錄不同類型的預約。
-          </div>
-        </div>
-
-        <div>
+    <>
+      <PageBlock
+        isLoading={isLoading}
+        isEmpty={!reservations?.length}
+        title="預約資訊"
+        description="包括購買門票、機票預訂、住宿安排和餐廳預約，它可以幫助您記錄不同類型的預約。"
+        extra={
           <Button
             onClick={() => setOpenModal({ type: ModalType.NEW })}
             type="primary"
@@ -53,10 +46,9 @@ const ReservationPage = ({ params }: { params: { tripId: number } }) => {
           >
             新增
           </Button>
-        </div>
-      </div>
-
-      <div className="mt-3 flex h-0 flex-[1_1_0] flex-col gap-4 overflow-auto p-1 pb-6">
+        }
+        contentClassName="flex-col"
+      >
         {reservations?.map((reservation) => (
           <ReservationBlock
             onEdit={() =>
@@ -72,7 +64,7 @@ const ReservationPage = ({ params }: { params: { tripId: number } }) => {
             reservation={reservation}
           />
         ))}
-      </div>
+      </PageBlock>
 
       <AddReservationModal
         open={openModal?.type === ModalType.NEW}
@@ -94,7 +86,7 @@ const ReservationPage = ({ params }: { params: { tripId: number } }) => {
         data={openModal?.data}
         onClose={() => setOpenModal(null)}
       />
-    </div>
+    </>
   );
 };
 

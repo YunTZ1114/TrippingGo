@@ -22,7 +22,7 @@ export const ReservationBlock = ({
       collapsible: "icon",
       key: "1",
       extra: (
-        <div className="flex items-center gap-1 text-primary">
+        <div className="flex items-center gap-1 text-primary opacity-0 transition-all group-hover:opacity-100">
           <MaterialSymbol
             className="cursor-pointer"
             onClick={onEdit}
@@ -110,7 +110,7 @@ export const ReservationBlock = ({
 
   return (
     <Collapse
-      className="bg-white"
+      className="group bg-white"
       items={items}
       bordered={false}
       expandIcon={({ isActive }) => (
