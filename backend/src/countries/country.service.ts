@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { DatabaseService } from 'src/database/database.service';
 
 @Injectable()
@@ -30,9 +30,7 @@ export class CountryService {
       where: { id },
     });
 
-    if (!country) {
-      throw new NotFoundException(`Country with id ${id} not found`);
-    }
+    if (!country) throw new HttpException('The country is not found.', HttpStatus.NOT_FOUND);
 
     return country;
   }

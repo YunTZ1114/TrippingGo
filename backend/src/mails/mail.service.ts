@@ -1,7 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import * as nodemailer from 'nodemailer';
 import { MAIL_ADDRESS, MAIL_PASS, TEST_MAIL } from 'src/config';
 import { DatabaseService } from 'src/database/database.service';
+import { SendMailOptions } from 'src/types/email.type';
 
 @Injectable()
 export class MailService {
@@ -18,13 +19,13 @@ export class MailService {
     });
   }
 
-  async sendMail(to: string, userId: number, subject: string, text: string, html: string, code: string, type: string) {
+  async sendMail({ recipient = TEST_MAIL, userId, subject, plainText, htmlContent, verificationCode, type }: SendMailOptions) {
     const mailOptions = {
       from: MAIL_ADDRESS,
-      to: TEST_MAIL,
-      subject: subject,
-      text: text,
-      html: html,
+      to: recipient,
+      subject,
+      text: plainText,
+      html: htmlContent,
     };
 
     const currentTime = new Date();
@@ -37,9 +38,9 @@ export class MailService {
           userId,
           subject,
           type,
-          html,
+          html: htmlContent,
           expiresAt,
-          code,
+          code: verificationCode,
         },
       });
 
@@ -47,6 +48,7 @@ export class MailService {
       return 'Email sent: ' + info.response;
     } catch (error) {
       console.error('Error sending email: ', error);
+      throw new HttpException('Failed to send email.', HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 

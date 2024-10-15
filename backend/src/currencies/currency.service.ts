@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { DatabaseService } from 'src/database/database.service';
 import { lastValueFrom } from 'rxjs';
@@ -53,9 +53,7 @@ export class CurrencyService {
   async deleteCurrencies() {
     const currency = await this.databaseService.currency.findMany();
 
-    if (!currency?.length) {
-      throw new NotFoundException(`No any currency be found`);
-    }
+    if (!currency?.length) throw new HttpException('The currency is not found.', HttpStatus.NOT_FOUND);
 
     await this.databaseService.currency.deleteMany();
   }

@@ -1,4 +1,4 @@
-import { ForbiddenException, Injectable } from '@nestjs/common';
+import { ForbiddenException, HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { DatabaseService } from 'src/database/database.service';
 import { BaseCheckList } from 'src/types/checkList.type';
 
@@ -11,7 +11,7 @@ export class CheckListService {
       where: { id: tripMemberId, isDeleted: false },
     });
 
-    if (!tripMember) throw new Error('The tripMember is not found.');
+    if (!tripMember) throw new HttpException('The trip member is not found.', HttpStatus.NOT_FOUND);
 
     const checkLists = await this.databaseService.checkList.findMany({
       where: {
@@ -26,13 +26,15 @@ export class CheckListService {
           },
         ],
       },
-      orderBy:{
-        id:'desc'
-      }
+      orderBy: {
+        id: 'desc',
+      },
     });
 
     const formattedCheckLists = checkLists.map(({ description, ...others }) => {
-      const formattedDescription = (Object.entries(description).map(([key, value]) => {return {text: key, checked: value.includes(tripMemberId)}} ));
+      const formattedDescription = Object.entries(description).map(([key, value]) => {
+        return { text: key, checked: value.includes(tripMemberId) };
+      });
       return { ...others, description: formattedDescription };
     });
 
@@ -44,7 +46,7 @@ export class CheckListService {
       where: { id: tripMemberId },
     });
 
-    if (!tripMember) throw new Error('The tripMember is not found.');
+    if (!tripMember) throw new HttpException('The trip member is not found.', HttpStatus.NOT_FOUND);
 
     const descriptionObject = description.reduce(
       (acc, key) => {
@@ -63,20 +65,18 @@ export class CheckListService {
 
   async updateCheckListDescriptionValue(checkListId: number, descriptionKey: string, tripMemberId: number) {
     const checkList = await this.databaseService.checkList.findUnique({ where: { id: checkListId, isDeleted: false } });
-    if (!checkList) throw new Error('The checkList is not found.');
+    if (!checkList) throw new HttpException('The checkList is not found.', HttpStatus.NOT_FOUND);
 
     const { isPublic, tripMemberId: creatorId } = checkList;
-    if (!isPublic && tripMemberId !== creatorId) throw new ForbiddenException('You do not have permission to delete this checklist.');
+    if (!isPublic && tripMemberId !== creatorId)
+      throw new HttpException('You do not have permission to delete this checklist.', HttpStatus.FORBIDDEN);
 
     const { description } = checkList;
-    if (!description || typeof description !== 'object') {
-      throw new Error('The description field is not a valid object.');
-    }
+    if (!description || typeof description !== 'object')
+      throw new HttpException('The description field is not a valid object.', HttpStatus.BAD_REQUEST);
 
-    const descriptionValue = description[descriptionKey];
-    if (!descriptionValue) {
-      throw new Error(`The description key "${descriptionKey}" is not found in the checklist.`);
-    }
+    if (!(descriptionKey in description))
+      throw new HttpException(`The description key "${descriptionKey}" is not found in the checklist.`, HttpStatus.BAD_REQUEST);
 
     const memberIdIndex = description[descriptionKey].indexOf(tripMemberId);
     if (memberIdIndex > -1) description[descriptionKey].splice(memberIdIndex, 1);
@@ -96,7 +96,7 @@ export class CheckListService {
 
   async updateCheckList({ id, title, description }: { id: number; title: string; description: string[] }, tripMemberId: number) {
     const checkList = await this.databaseService.checkList.findUnique({ where: { id, isDeleted: false } });
-    if (!checkList) throw new Error('The checkList is not found.');
+    if (!checkList) throw new HttpException('The checkList is not found.', HttpStatus.NOT_FOUND);
 
     const { isPublic, tripMemberId: creatorId } = checkList;
     if (!isPublic && tripMemberId !== creatorId) throw new ForbiddenException('You do not have permission to update this checklist.');
@@ -117,11 +117,12 @@ export class CheckListService {
       where: { id: checkListId },
     });
 
-    if (!checkList) throw new Error('The checkList is not found.');
+    if (!checkList) throw new HttpException('The checkList is not found.', HttpStatus.NOT_FOUND);
 
     const { isPublic, tripMemberId: creatorId } = checkList;
 
-    if (!isPublic && tripMemberId !== creatorId) throw new ForbiddenException('You do not have permission to delete this checklist.');
+    if (!isPublic && tripMemberId !== creatorId)
+      throw new HttpException('You do not have permission to delete this checklist.', HttpStatus.FORBIDDEN);
 
     await this.databaseService.checkList.update({ where: { id: checkListId }, data: { isDeleted: true } });
   }

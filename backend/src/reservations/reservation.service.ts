@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { DatabaseService } from 'src/database/database.service';
 import { BaseReservation } from 'src/types/reservation.type';
 
@@ -15,10 +15,11 @@ export class ReservationService {
         isDeleted: false,
       },
       orderBy: {
-        id: 'desc'
-      }
+        id: 'desc',
+      },
     });
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     return reservations.map(({ isDeleted, createdAt, ...other }) => {
       return { ...other };
     });
@@ -52,7 +53,7 @@ export class ReservationService {
       },
     });
 
-    if (!reservation) throw new Error('The reservation is not found.');
+    if (!reservation) throw new HttpException('The reservation is not found.', HttpStatus.NOT_FOUND);
 
     await this.databaseService.reservation.update({
       where: { id: reservationId },
@@ -78,7 +79,7 @@ export class ReservationService {
       },
     });
 
-    if (!reservation) throw new Error('The reservation is not found.');
+    if (!reservation) throw new HttpException('The reservation is not found.', HttpStatus.NOT_FOUND);
 
     await this.databaseService.reservation.update({
       where: { id: reservationId },

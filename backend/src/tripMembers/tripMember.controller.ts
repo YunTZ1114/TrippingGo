@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Request, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpException, HttpStatus, Param, Post, Put, Request, UseGuards } from '@nestjs/common';
 import { DatabaseService } from 'src/database/database.service';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { RequiredPermission } from 'src/decorators/required-permission.decorator';
@@ -38,6 +38,8 @@ export class TripMemberController {
   async updateTripMembers(@Request() req, @Param('tripId') tripId: number, @Body() updateTripMembers: UpdateTripMemberDto) {
     const { userId, userPermission } = req;
     const { info, permissions } = updateTripMembers;
+
+    if (!info && !permissions) throw new HttpException('No update data provided.', HttpStatus.BAD_REQUEST);
 
     await this.databaseService.executeTransaction(async () => {
       if (userPermission === PermissionsText.CREATOR) {
