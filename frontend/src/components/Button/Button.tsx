@@ -2,10 +2,14 @@ import {
   Button as AntdButton,
   type ButtonProps as AntdButtonProps,
 } from "antd";
+import { forwardRef } from "react";
 
 interface ButtonProps extends AntdButtonProps {}
 
-export const Button = ({ children, ...props }: ButtonProps) => {
+export const Button = forwardRef<
+  HTMLButtonElement | HTMLAnchorElement,
+  ButtonProps
+>(({ children, ...props }, ref) => {
   const childrenClass = (() => {
     switch (props.size) {
       case "large":
@@ -19,8 +23,8 @@ export const Button = ({ children, ...props }: ButtonProps) => {
   })();
 
   return (
-    <AntdButton {...props}>
+    <AntdButton ref={ref} {...props}>
       <span className={childrenClass}>{children}</span>
     </AntdButton>
   );
-};
+});
