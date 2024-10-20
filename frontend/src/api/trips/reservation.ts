@@ -8,17 +8,17 @@ export const reservationsKeys = {
 export interface BaseReservation {
   type: string;
   title: string;
-  reservationTime: Date;
-  endTime?: Date | null;
+  reservationTime: string;
+  endTime?: string | null;
   tripMemberId: number;
   amount: number;
-  note?: string;
-  description?: string;
+  note?: string | null;
+  description?: string | null;
 }
 
 export interface Reservation extends BaseReservation {
   id: number;
-  updatedAt: Date;
+  updatedAt: string;
 }
 
 export const getReservations = async ({

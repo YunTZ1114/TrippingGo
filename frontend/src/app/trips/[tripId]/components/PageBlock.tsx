@@ -12,6 +12,7 @@ interface PageBlockProps {
   isLoading?: boolean;
   isEmpty?: boolean;
   contentClassName?: string;
+  className?: string;
   children: React.ReactNode;
 }
 
@@ -23,13 +24,14 @@ export const PageBlock = ({
   isLoading,
   isEmpty,
   contentClassName,
+  className,
   children,
 }: PageBlockProps) => {
   const queryClient = useQueryClient();
   const isMutating = queryClient.isMutating();
 
   return (
-    <div className="flex h-full flex-col px-10 pt-7">
+    <div className={classNames("flex h-full flex-col px-10 pt-7", className)}>
       {/* 上方資訊欄 */}
       <div className="flex gap-2">
         <div className="w-full">
@@ -64,7 +66,7 @@ export const PageBlock = ({
       {/* 內容 */}
       <div
         className={classNames(
-          "mt-5 flex h-0 flex-[1_1_0] gap-4 overflow-auto",
+          "mt-5 flex h-0 flex-[1_1_0] flex-col gap-4 overflow-auto",
           contentClassName,
         )}
       >

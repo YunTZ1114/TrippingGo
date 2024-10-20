@@ -20,7 +20,7 @@ enum TripListType {
 }
 
 const tabItems: TabsProps["items"] = [
-  { disabled: true, key: TripListType.RECOMMEND, label: "推薦行程" },
+  { key: TripListType.RECOMMEND, label: "推薦行程" },
   { key: TripListType.MINE, label: "我的旅行" },
   { disabled: true, key: TripListType.SAVED, label: "已儲存" },
   { disabled: true, key: TripListType.RESULT, label: "搜尋結果" },

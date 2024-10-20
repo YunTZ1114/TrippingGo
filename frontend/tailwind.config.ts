@@ -99,7 +99,7 @@ const config: Config = {
         "label-large": [
           "16px",
           {
-            fontWeight: "600",
+            fontWeight: "800",
             lineHeight: "1.42",
             letterSpacing: "0.1px",
           },
@@ -107,7 +107,7 @@ const config: Config = {
         "label-medium": [
           "14px",
           {
-            fontWeight: "600",
+            fontWeight: "800",
             lineHeight: "1.32",
             letterSpacing: "0.5px",
           },
@@ -115,7 +115,7 @@ const config: Config = {
         "label-small": [
           "12px",
           {
-            fontWeight: "600",
+            fontWeight: "800",
             lineHeight: "1.42",
             letterSpacing: "0.5px",
           },
