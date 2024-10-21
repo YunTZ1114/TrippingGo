@@ -24,8 +24,8 @@ const items = [
     label: "行程安排",
     children: [
       {
+        key: "places",
         icon: <MaterialSymbol fill icon="location_on" />,
-        key: "location_on",
         label: "景點選擇",
       },
       {
@@ -81,7 +81,7 @@ export const SideBar = () => {
   const activeKey = pathMatch ? [pathMatch[1]] : undefined;
 
   return (
-    <div className="w-[300px]">
+    <div className="w-[300px] flex-shrink-0">
       <div className="mb-4 flex w-full items-center justify-between px-4 text-white">
         <Link href="/">
           <Image src={logo} sizes="12px" alt="logo" />
