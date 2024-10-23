@@ -19,7 +19,7 @@ export class TripService {
         userId: user.id,
         nickname: user.name,
         tripId: trip.id,
-        permissions: 4,
+        permissions: 3,
       },
     });
 
@@ -111,8 +111,8 @@ export class TripService {
         name,
         description,
         currencyCode,
-        startTime,
-        endTime,
+        startTime: new Date(startTime),
+        endTime: new Date(endTime),
         coverUrl: coverUrl ?? trip.coverUrl,
       },
     });
