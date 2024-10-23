@@ -28,6 +28,19 @@ export class TripController {
     };
   }
 
+  @Get('/:tripId')
+  async getTripDetail(@Param('tripId') tripId: number) {
+    const trip = await this.tripService.getTrip(tripId);
+    const tripMembers = await this.tripMemberService.getTripMembers(tripId);
+
+    const tripDetail = { trip, tripMembers };
+
+    return {
+      message: 'Retrieve trip successfully',
+      data: tripDetail,
+    };
+  }
+
   @Post('')
   async createTrip(@Request() req, @Body() tripDto: TripDto) {
     const { userId } = req;

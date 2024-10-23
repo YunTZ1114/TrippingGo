@@ -19,11 +19,32 @@ export class TripService {
         userId: user.id,
         nickname: user.name,
         tripId: trip.id,
-        permissions: 4,
+        permissions: 3,
       },
     });
 
     return trip.id;
+  }
+
+  async getTrip(tripId: number) {
+    const tripDetail = await this.databaseService.trip.findUnique({
+      where: {
+        isDeleted: false,
+        id: tripId,
+      },
+      select: {
+        id: true,
+        name: true,
+        description: true,
+        coverUrl: true,
+        creatorId: true,
+        currencyCode: true,
+        startTime: true,
+        endTime: true,
+      },
+    });
+
+    return tripDetail;
   }
 
   async getTrips(filter: TripFilterType, q: string, userId: number): Promise<TripPreview[]> {
@@ -90,8 +111,8 @@ export class TripService {
         name,
         description,
         currencyCode,
-        startTime,
-        endTime,
+        startTime: new Date(startTime),
+        endTime: new Date(endTime),
         coverUrl: coverUrl ?? trip.coverUrl,
       },
     });
