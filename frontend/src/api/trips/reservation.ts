@@ -1,25 +1,10 @@
 import { baseInstance } from "../instance";
 import { APIRequestConfig, APIResponseData } from "../interface";
+import { BaseReservation, Reservation } from "./interfaces";
 
 export const reservationsKeys = {
   reservation: (tripId: number) => ["trips", tripId, "reservation"] as const,
 };
-
-export interface BaseReservation {
-  type: string;
-  title: string;
-  reservationTime: string;
-  endTime?: string | null;
-  tripMemberId: number;
-  amount: number;
-  note?: string | null;
-  description?: string | null;
-}
-
-export interface Reservation extends BaseReservation {
-  id: number;
-  updatedAt: string;
-}
 
 export const getReservations = async ({
   pathParams,
