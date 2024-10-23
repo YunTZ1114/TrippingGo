@@ -1,4 +1,5 @@
 import { api } from "@/api";
+import { TripDetail } from "@/api/trips";
 import { logo } from "@/assets";
 import { MaterialSymbol } from "@/components/MaterialSymbol";
 import { useQuery } from "@tanstack/react-query";
@@ -69,7 +70,7 @@ const items = [
   },
 ];
 
-export const SideBar = () => {
+export const SideBar = ({ data }: { data: TripDetail }) => {
   const userMe = useQuery({
     queryKey: api.users.keys.me(),
     queryFn: api.users.me,
@@ -91,13 +92,14 @@ export const SideBar = () => {
           <MaterialSymbol icon="light_mode" />
           <Avatar
             className="cursor-pointer"
-            src={userMe.data?.avatar ?? "/default-avatar.png"}
+            icon={userMe.data?.name[0].toUpperCase()}
+            src={userMe.data?.avatar}
             size={28}
           />
         </div>
       </div>
       <div className="mb-4 pl-6 pr-2 text-title-large text-white">
-        京阪6天5夜秋季日本行可以換行歐
+        {data.trip.name}
       </div>
       <div className="mx-6">
         <Divider className="border-t-2 border-white/30" />
