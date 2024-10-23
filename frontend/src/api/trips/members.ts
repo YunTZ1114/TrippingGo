@@ -1,25 +1,9 @@
 import { baseInstance } from "../instance";
 import { APIRequestConfig, APIResponseData } from "../interface";
+import { Member, Role } from "./interfaces";
 
 export const memberKeys = {
   members: (tripId: number) => ["trips", tripId, "member"],
-};
-
-export enum Role {
-  VIEWER = "VIEWER",
-  EDITOR = "EDITOR",
-  CREATOR = "CREATOR",
-}
-
-export type Member = {
-  id: number;
-  userId: number;
-  nickname: string;
-  userName: string;
-  description?: string;
-  note?: string;
-  avatar?: string;
-  role: Role;
 };
 
 export const getMembers = async ({

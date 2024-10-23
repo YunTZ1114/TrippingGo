@@ -1,29 +1,9 @@
 import { baseInstance } from "../instance";
 import { APIRequestConfig, APIResponseData } from "../interface";
+import { BaseCheckListItem, CheckListItem } from "./interfaces";
 
 export const checkListKeys = {
   checkList: (tripId: number) => ["trips", tripId, "checkList"],
-};
-
-export enum CheckListType {
-  PREPARATION = "PREPARATION",
-  SHOPPING = "SHOPPING",
-}
-
-export type BaseCheckListItem = {
-  description: string[];
-  title: string;
-  type: CheckListType;
-  isPublic: boolean;
-};
-
-export type BaseCheckListItemWithId = BaseCheckListItem & {
-  id: number;
-};
-
-export type CheckListItem = Omit<BaseCheckListItem, "description"> & {
-  id: number;
-  description: { text: string; checked: boolean }[];
 };
 
 export const getCheckList = async ({
