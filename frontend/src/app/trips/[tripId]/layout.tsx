@@ -43,7 +43,7 @@ const Layout = ({
   if (!data) {
     if (error instanceof AxiosError) {
       if (error.status === 401) redirect("/login");
-      if (error.status === 404) notFound();
+      if (error.status === 404 || error.status === 403) notFound();
     }
     redirect("/");
   }
