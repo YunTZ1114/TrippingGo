@@ -44,6 +44,8 @@ export class TripService {
       },
     });
 
+    if (!tripDetail) throw new HttpException('Trip not found.', HttpStatus.NOT_FOUND);
+
     return tripDetail;
   }
 

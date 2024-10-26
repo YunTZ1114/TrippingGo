@@ -39,8 +39,8 @@ export class PlaceController {
 
   @Delete('/:placeId')
   @RequiredPermission(PermissionsText.EDITOR)
-  async deletePlace(@Param('tripId') tripId: number) {
-    await this.placeService.deletePlace(tripId);
+  async deletePlace(@Param('placeId') placeId: number) {
+    await this.placeService.deletePlace(placeId);
 
     return { message: 'Delete reservation in trip successfully' };
   }
