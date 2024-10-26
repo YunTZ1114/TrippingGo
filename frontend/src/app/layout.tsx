@@ -1,3 +1,4 @@
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { ConfigProvider } from "antd";
 import zhTW from "antd/locale/zh_TW";
 import type { Metadata } from "next";
@@ -33,6 +34,8 @@ export default function RootLayout({
           rel="stylesheet"
         />
         <Providers>
+          <ReactQueryDevtools initialIsOpen={false} />
+
           <AntdRegistry layer>
             <ConfigProvider locale={zhTW} theme={antdTheme}>
               {children}

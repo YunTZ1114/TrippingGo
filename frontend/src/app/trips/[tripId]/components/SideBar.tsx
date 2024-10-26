@@ -82,7 +82,7 @@ export const SideBar = ({ data }: { data: TripDetail }) => {
   const activeKey = pathMatch ? [pathMatch[1]] : undefined;
 
   return (
-    <div className="w-[300px] flex-shrink-0">
+    <div className="w-[260px] flex-shrink-0">
       <div className="mb-4 flex w-full items-center justify-between px-4 text-white">
         <Link href="/">
           <Image src={logo} sizes="12px" alt="logo" />

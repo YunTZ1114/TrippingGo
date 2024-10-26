@@ -20,18 +20,26 @@ export const PlaceDetail = ({
     console.log(key);
   };
 
-  const handleWeekdayText = weekdayText?.map((item) => (
-    <div key={item} className="mb-4">
-      {item}
-    </div>
-  ));
   const tabItems: TabsProps["items"] = [
     {
       key: PlaceDetailType.HOURS,
       label: "營業時間",
       children: (
-        <div className="ml-2 pt-2 text-[12px] font-bold">
-          {handleWeekdayText}
+        <div className="space-y-2 rounded-lg p-4">
+          <div className="space-y-2 text-sm">
+            {weekdayText?.map((item: string) => {
+              const [day, hours] = item.split(": ");
+              return (
+                <div
+                  key={item}
+                  className="flex items-center justify-between rounded-md px-2 py-1 hover:bg-gray-100"
+                >
+                  <span className="font-medium text-gray-700">{day}</span>
+                  <span className="text-gray-600">{hours}</span>
+                </div>
+              );
+            })}
+          </div>
         </div>
       ),
     },
