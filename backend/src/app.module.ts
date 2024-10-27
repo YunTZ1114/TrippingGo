@@ -9,9 +9,21 @@ import { TripMemberModule } from './tripMembers/tripMember.module';
 import { CheckListModule } from './checkLists/checkList.module';
 import { ReservationModule } from './reservations/reservation.module';
 import { PlaceModule } from './places/place.module';
+import { PlaceCommentModule } from './placeComments/placeComment.module';
 
 @Module({
-  imports: [AuthModule, CurrencyModule, CountryModule, TripModule, TripMemberModule, UserModule, CheckListModule, PlaceModule, ReservationModule],
+  imports: [
+    AuthModule,
+    CurrencyModule,
+    CountryModule,
+    TripModule,
+    TripMemberModule,
+    UserModule,
+    CheckListModule,
+    PlaceModule,
+    ReservationModule,
+    PlaceCommentModule,
+  ],
   controllers: [],
   providers: [],
 })

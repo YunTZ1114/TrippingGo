@@ -34,7 +34,7 @@ export default function RootLayout({
           rel="stylesheet"
         />
         <Providers>
-          <ReactQueryDevtools initialIsOpen={false} />
+          <ReactQueryDevtools position="left" initialIsOpen={false} />
 
           <AntdRegistry layer>
             <ConfigProvider locale={zhTW} theme={antdTheme}>

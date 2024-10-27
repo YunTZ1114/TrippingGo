@@ -10,10 +10,12 @@ enum PlaceDetailType {
 }
 
 export const PlaceDetail = ({
+  tripId,
   placeId,
   weekdayText,
 }: {
-  placeId?: number;
+  tripId: number;
+  placeId: number;
   weekdayText?: string[];
 }) => {
   const onChange = (key: string) => {
@@ -46,7 +48,7 @@ export const PlaceDetail = ({
     {
       key: PlaceDetailType.COMMENTS,
       label: "留言",
-      children: <CommentList />,
+      children: <CommentList tripId={tripId} placeId={placeId} />,
     },
     {
       key: PlaceDetailType.RESERVATIONS,

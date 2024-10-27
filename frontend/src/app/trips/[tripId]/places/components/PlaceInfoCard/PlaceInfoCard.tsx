@@ -1,14 +1,28 @@
 import { Collapse, CollapseProps } from "antd";
-import { PlaceInfo } from "../../interface";
-import { PlaceBaseInfo } from "./PlaceBaseInfo";
-import { MaterialSymbol } from "@/components/MaterialSymbol";
-import { PlaceDetail } from "./PlaceDetail";
-import { Place } from "@/api/trips";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { MaterialSymbol } from "@/components/MaterialSymbol";
 import { api } from "@/api";
+import { Place } from "@/api/trips";
+import { PlaceBaseInfo } from "./PlaceBaseInfo";
+import { PlaceDetail } from "./PlaceDetail";
+import { useEffect, useRef, useState } from "react";
 
-export const PlaceInfoCard = ({ place }: { place: Place }) => {
+export const PlaceInfoCard = ({
+  open,
+  place,
+  onOpenChange,
+}: {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  place: Place;
+}) => {
   const queryClient = useQueryClient();
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!ref.current || !open) return;
+    ref.current.scrollIntoView();
+  }, [open]);
 
   const deletePlaceAction = useMutation({
     mutationFn: api.trips.deletePlace,
@@ -23,7 +37,7 @@ export const PlaceInfoCard = ({ place }: { place: Place }) => {
   const items: CollapseProps["items"] = [
     {
       collapsible: "icon",
-      key: "1",
+      key: "item_1",
       extra: (
         <div
           onClick={() => {
@@ -36,14 +50,21 @@ export const PlaceInfoCard = ({ place }: { place: Place }) => {
       ),
       label: <PlaceBaseInfo place={place} />,
       children: (
-        <PlaceDetail placeId={place.id} weekdayText={place.weekdayText} />
+        <PlaceDetail
+          tripId={place.tripId}
+          placeId={place.id}
+          weekdayText={place.weekdayText}
+        />
       ),
     },
   ];
 
   return (
     <Collapse
-      className="group mb-2 bg-white"
+      ref={ref}
+      onChange={(v) => onOpenChange(v.includes("item_1"))}
+      activeKey={open ? ["item_1"] : []}
+      className="group bg-white"
       items={items}
       bordered={false}
       expandIcon={({ isActive }) => (

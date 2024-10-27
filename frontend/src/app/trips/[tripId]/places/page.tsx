@@ -7,6 +7,9 @@ import { PageBlock } from "../components";
 import { PlaceInfoCard } from "./components/PlaceInfoCard";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "@/api";
+import { PlaceInfo } from "./interface";
+import { GooglePlaceInfoCard } from "./components/PlaceInfoCard/GooglePlaceInfoCard";
+import { Place } from "@/api/trips";
 
 const libraries: "places"[] = ["places"];
 const center = { lat: 25.038, lng: 121.5645 };
@@ -15,7 +18,8 @@ const PlacePage = ({ params }: { params: { tripId: string } }) => {
   const [location, setLocation] = useState<google.maps.LatLngLiteral | null>(
     null,
   );
-  // const [address, setAddress] = useState("");
+  const [placeInfo, setPlaceInfo] = useState<PlaceInfo | null>(null);
+  const [openCard, setOpenCard] = useState<number>();
   const [selectedLocation, setSelectedLocation] =
     useState<google.maps.LatLngLiteral | null>(null);
 
@@ -30,6 +34,33 @@ const PlacePage = ({ params }: { params: { tripId: string } }) => {
     libraries,
     language: "zh-TW",
   });
+
+  const handlePlaceSelected = (placeInfo: PlaceInfo) => {
+    const { locationLat, locationLng, placeId } = placeInfo;
+    if (locationLat && locationLng) {
+      setSelectedLocation({ lat: locationLat, lng: locationLng });
+    }
+    const placeItem = places?.find(
+      ({ googlePlaceId }) => googlePlaceId === placeId,
+    );
+    if (placeItem) {
+      setOpenCard(placeItem.id);
+      setPlaceInfo(null);
+      return;
+    }
+
+    setPlaceInfo(placeInfo);
+  };
+
+  const handleCardOpenChange = (isOpen: boolean, place: Place) => {
+    console.log(isOpen, place);
+    if (!isOpen) {
+      setOpenCard(undefined);
+      return;
+    }
+    setOpenCard(place.id);
+    setSelectedLocation({ lat: +place.locationLat, lng: +place.locationLng });
+  };
 
   useEffect(() => {
     if (!isLoaded) return;
@@ -56,14 +87,6 @@ const PlacePage = ({ params }: { params: { tripId: string } }) => {
     fetchLocation();
   }, [isLoaded]);
 
-  const handlePlaceSelected = (
-    location: google.maps.LatLngLiteral,
-    //address: string,
-  ) => {
-    setSelectedLocation(location);
-    //setAddress(address);
-  };
-
   if (loadError) return <div>加載錯誤: {loadError.message}</div>;
 
   return (
@@ -74,15 +97,23 @@ const PlacePage = ({ params }: { params: { tripId: string } }) => {
         isLoading={!isLoaded}
         className="w-[600px] shrink-0"
       >
-        <div>
-          <PlaceSearchBar
-            tripId={+params.tripId}
-            onPlaceSelected={handlePlaceSelected}
-          />
-        </div>
-        <div className="h-full flex-1 overflow-auto">
+        <PlaceSearchBar onPlaceSelected={handlePlaceSelected} />
+
+        <div className="flex h-full flex-1 flex-col gap-2 overflow-auto">
+          {placeInfo && (
+            <GooglePlaceInfoCard
+              tripId={+params.tripId}
+              placeInfo={placeInfo}
+              onClose={() => setPlaceInfo(null)}
+            />
+          )}
           {places?.map((place) => (
-            <PlaceInfoCard key={place.id} place={place} />
+            <PlaceInfoCard
+              open={openCard === place.id}
+              onOpenChange={(v) => handleCardOpenChange(v, place)}
+              key={place.id}
+              place={place}
+            />
           ))}
         </div>
       </PageBlock>

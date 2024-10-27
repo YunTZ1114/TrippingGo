@@ -1,22 +1,14 @@
+import { useState, useCallback } from "react";
 import { Autocomplete } from "@react-google-maps/api";
-import { useState, useCallback, useRef } from "react";
 import { Input } from "@/components";
-import { PlaceInfo } from "../interface";
 import { MaterialSymbol } from "@/components/MaterialSymbol";
-import { GooglePlaceInfoCard } from "./PlaceInfoCard/GooglePlaceInfoCard";
+import { PlaceInfo } from "../interface";
 
 interface PlaceSearchBarProps {
-  onPlaceSelected: (
-    location: google.maps.LatLngLiteral,
-    address: string,
-  ) => void;
+  onPlaceSelected: (value: PlaceInfo) => void;
 }
 
-export const PlaceSearchBar = ({
-  tripId,
-  onPlaceSelected,
-}: PlaceSearchBarProps & { tripId: number }) => {
-  const [placeInfo, setPlaceInfo] = useState<PlaceInfo | null>(null);
+export const PlaceSearchBar = ({ onPlaceSelected }: PlaceSearchBarProps) => {
   const [searchValue, setSearchValue] = useState("");
   const [autocomplete, setAutocomplete] =
     useState<google.maps.places.Autocomplete | null>(null);
@@ -33,7 +25,6 @@ export const PlaceSearchBar = ({
 
     const place = autocomplete.getPlace();
     if (!place.geometry || !place.geometry.location) return;
-    console.log("place: ", place);
 
     const placeDetails: PlaceInfo = {
       placeId: place.place_id,
@@ -50,37 +41,20 @@ export const PlaceSearchBar = ({
     };
 
     setSearchValue(place.name ?? "");
-    setPlaceInfo(placeDetails);
-
-    onPlaceSelected(
-      {
-        lat: place.geometry.location.lat(),
-        lng: place.geometry.location.lng(),
-      },
-      place.formatted_address || "",
-    );
+    onPlaceSelected(placeDetails);
   };
 
   return (
-    <div>
-      <Autocomplete onLoad={handleLoad} onPlaceChanged={handlePlaceChanged}>
-        <Input
-          placeholder="搜尋..."
-          prefix={<MaterialSymbol icon="search" />}
-          variant="filled"
-          size="large"
-          className="w-full rounded-full border-none bg-white"
-          value={searchValue}
-          onChange={(e) => setSearchValue(e.target.value)}
-        />
-      </Autocomplete>
-      {placeInfo && setPlaceInfo && (
-        <GooglePlaceInfoCard
-          tripId={tripId}
-          placeInfo={placeInfo}
-          onClose={() => setPlaceInfo(null)}
-        />
-      )}
-    </div>
+    <Autocomplete onLoad={handleLoad} onPlaceChanged={handlePlaceChanged}>
+      <Input
+        placeholder="搜尋..."
+        prefix={<MaterialSymbol icon="search" />}
+        variant="filled"
+        size="large"
+        className="w-full rounded-full border-none bg-white"
+        value={searchValue}
+        onChange={(e) => setSearchValue(e.target.value)}
+      />
+    </Autocomplete>
   );
 };
