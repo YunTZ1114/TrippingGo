@@ -65,7 +65,7 @@ const DateTimePicker = ({
   onChange?: (value: Date) => void;
 }) => {
   return (
-    <div className="flex items-center gap-4 w-full">
+    <div className="flex w-full items-center gap-4">
       <DatePicker
         allowClear={false}
         className="w-full bg-white"
@@ -88,7 +88,7 @@ const DateTimePicker = ({
 const ReservationTimePicker = () => {
   const hasEndTime = Form.useWatch(["time", "hasEndTime"]);
   return (
-    <div className="p-4 rounded-lg bg-surfaceLight">
+    <div className="rounded-lg bg-surfaceLight p-4">
       <div className="flex items-center gap-1 px-2 pb-2">開始時間</div>
       <Form.Item noStyle name={["time", "reservationTime"]}>
         <DateTimePicker />
@@ -100,7 +100,7 @@ const ReservationTimePicker = () => {
           valuePropName="checked"
           name={["time", "hasEndTime"]}
         >
-          <Checkbox className="flex-row-reverse -ml-2">結束時間</Checkbox>
+          <Checkbox className="-ml-2 flex-row-reverse">結束時間</Checkbox>
         </Form.Item>
       </div>
       {hasEndTime && (
@@ -112,22 +112,36 @@ const ReservationTimePicker = () => {
   );
 };
 
-export const ReservationForm = ({
-  tripId,
-}: {
-  tripId: number;
-}) => {
+export const ReservationForm = ({ tripId }: { tripId: number }) => {
   const [isNotePreview, setIsNotePreview] = useState(false);
   const [isDescriptionPreview, setIsDescriptionPreview] = useState(false);
+
+  const { data: places } = useQuery({
+    queryKey: api.trips.keys.place(tripId),
+    queryFn: () => api.trips.getPlaces({ pathParams: { tripId: tripId } }),
+  });
 
   return (
     <>
       <Form.Item
         rules={[{ required: true, message: "請輸入預約名稱" }]}
         name="title"
-        label={<span className="text-title-medium">預約資訊</span>}
+        label={<span className="text-title-medium">預約名稱</span>}
       >
         <Input variant="filled" maxLength={60} />
+      </Form.Item>
+
+      <Form.Item
+        rules={[{ required: false, message: "請選擇地點" }]}
+        name="placeId"
+        label={<span className="text-title-medium">地點</span>}
+      >
+        <Select
+          options={places?.map(({ id, name }) => ({
+            label: name,
+            value: id,
+          }))}
+        />
       </Form.Item>
 
       <Form.Item
@@ -164,7 +178,7 @@ export const ReservationForm = ({
         <ReservationTimePicker></ReservationTimePicker>
       </Form.Item>
 
-      <div className="grid grid-cols-2 w-full gap-4">
+      <div className="grid w-full grid-cols-2 gap-4">
         <Form.Item
           rules={[{ required: true, message: "請選擇預約人員" }]}
           name="tripMemberId"
@@ -191,7 +205,7 @@ export const ReservationForm = ({
       <Form.Item
         name="note"
         label={
-          <div className="flex items-center justify-between w-[999px]">
+          <div className="flex w-[999px] items-center justify-between">
             <div className="flex items-center justify-between gap-1">
               <span className="text-title-medium">注意事項</span>
               <Tooltip title="支援輸入md語法">
@@ -215,7 +229,7 @@ export const ReservationForm = ({
       <Form.Item
         name="description"
         label={
-          <div className="flex items-center justify-between w-[999px]">
+          <div className="flex w-[999px] items-center justify-between">
             <div className="flex items-center justify-between gap-1">
               <span className="text-title-medium">描述</span>
               <Tooltip title="支援輸入md語法">

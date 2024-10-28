@@ -2,9 +2,11 @@ import { Reservation } from "@/api/trips";
 import { MaterialSymbol } from "@/components/MaterialSymbol";
 import { scheduler } from "timers/promises";
 import { mappingTagValue } from "../../../constants";
-import { MarkdownPreview } from "@/components";
+import { Loading, MarkdownPreview } from "@/components";
 import { Fragment } from "react";
 import { Divider } from "antd";
+import { api } from "@/api";
+import { useQuery } from "@tanstack/react-query";
 
 const tripMemberData = [
   {
@@ -160,15 +162,34 @@ const ReservationInfo = ({ reservation }: { reservation: Reservation }) => {
     </div>
   );
 };
-export const Reservations = ({ placeId }: { placeId?: number }) => {
+export const Reservations = ({
+  tripId,
+  placeId,
+}: {
+  tripId: number;
+  placeId: number;
+}) => {
+  const { data: reservations, isLoading } = useQuery({
+    queryKey: api.trips.keys.placeReservation(tripId, placeId),
+    queryFn: async () =>
+      await api.trips.getReservations({
+        pathParams: { tripId },
+        params: { placeId },
+      }),
+  });
+
   return (
     <div className="flex flex-col gap-2">
-      {apiReservations.map((reservation, i) => (
-        <Fragment key={reservation.id}>
-          {!!i && <Divider />}
-          <ReservationInfo reservation={reservation} />
-        </Fragment>
-      ))}
+      {isLoading ? (
+        <Loading />
+      ) : (
+        reservations?.map((reservation, i) => (
+          <Fragment key={reservation.id}>
+            {!!i && <Divider />}
+            <ReservationInfo reservation={reservation} />
+          </Fragment>
+        ))
+      )}
     </div>
   );
 };

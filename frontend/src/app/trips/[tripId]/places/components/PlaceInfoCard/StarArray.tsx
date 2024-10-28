@@ -1,44 +1,51 @@
 import { MaterialSymbol } from "@/components/MaterialSymbol";
 
-export const StarArray = ({ rating }: { rating: number }) => {
-  const starSize = 14;
+export const StarArray = ({
+  iconSize,
+  rating,
+}: {
+  iconSize: number;
+  rating: number;
+}) => {
   const stars = Array.from({ length: 5 }, (_, index) => {
     const starValue = index + 1;
     if (starValue <= rating)
       return (
         <MaterialSymbol
+          key={index}
           icon="star"
           fill
           className="text-[#F0BF38]"
-          size={starSize}
+          size={iconSize}
         />
       );
 
     if (starValue < rating + 1)
       return (
-        <span className="relative flex items-center">
+        <span key={index} className="relative flex items-center">
           <MaterialSymbol
-            style={{ width: starSize * (rating % 1) }}
+            style={{ width: iconSize * (rating % 1) }}
             icon="star"
             fill
             className="absolute inset-0 overflow-hidden text-[#F0BF38]"
-            size={starSize}
+            size={iconSize}
           />
           <MaterialSymbol
             icon="star"
             fill
             className="text-gray-300"
-            size={starSize}
+            size={iconSize}
           />
         </span>
       );
 
     return (
       <MaterialSymbol
+        key={index}
         icon="star"
         fill
         className="text-gray-300"
-        size={starSize}
+        size={iconSize}
       />
     );
   });

@@ -4,6 +4,9 @@ import { Dropdown, InputNumber, MenuProps, Space } from "antd";
 import { useEffect, useRef, useState } from "react";
 import "./../../styles.css";
 import { mappingTagValue } from "../../../constants";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { api } from "@/api";
+import { PlaceType } from "@/api/trips";
 
 const items: MenuProps["items"] = Object.entries(mappingTagValue).map(
   ([key, value]) => ({
@@ -45,7 +48,7 @@ const DurationTag = ({
               step={1}
               variant="filled"
               value={inputValue}
-              onChange={(v) => v && setInputValue(v)}
+              onChange={(v) => setInputValue(v)}
               onBlur={() => {
                 setIsEditing(false);
                 onChange(inputValue);
@@ -62,15 +65,15 @@ const DurationTag = ({
           </>
         ) : (
           <>
-            {!!value ? (
-              `${value} 分鐘`
+            {!!inputValue ? (
+              `${inputValue} 分鐘`
             ) : (
               <div className="text-white/60">設定停留時間</div>
             )}
             <MaterialSymbol
               icon="edit"
               size={12}
-              className="ml w-0overflow-hidden transition-all group-hover/time:w-3"
+              className="ml w-0 overflow-hidden transition-all group-hover/time:w-3"
             />
           </>
         )}
@@ -83,13 +86,13 @@ const TypeTag = ({
   value,
   onChange,
 }: {
-  value?: string | null;
-  onChange: (value?: string | null) => void;
+  value?: PlaceType | null;
+  onChange: (value?: PlaceType | null) => void;
 }) => {
   const [selectValue, setSelectValue] = useState(value);
   const onClick: MenuProps["onClick"] = ({ key }) => {
-    setSelectValue(mappingTagValue[key as keyof typeof mappingTagValue]);
-    onChange(key);
+    setSelectValue(key as PlaceType);
+    onChange(key as PlaceType);
   };
 
   return (
@@ -105,7 +108,11 @@ const TypeTag = ({
       <Tag className="group/type cursor-pointer bg-[#A4CE5B]">
         <div className="flex items-center gap-2">
           <MaterialSymbol icon="sell" size={12} />
-          {selectValue ?? <div className="text-white/60">設定類別</div>}
+          {selectValue ? (
+            mappingTagValue[selectValue as keyof typeof mappingTagValue]
+          ) : (
+            <div className="text-white/60">設定類別</div>
+          )}
           <MaterialSymbol
             icon="stat_minus_1"
             size={12}
@@ -171,15 +178,15 @@ const CostTag = ({
           </>
         ) : (
           <>
-            {!!value ? (
-              `${value} ¥`
+            {!!inputValue ? (
+              `${inputValue} ¥`
             ) : (
               <div className="text-white/60">設定預估花費</div>
             )}
             <MaterialSymbol
               icon="edit"
               size={12}
-              className="ml w-0overflow-hidden transition-all group-hover/time:w-3"
+              className="ml w-0 overflow-hidden transition-all group-hover/time:w-3"
             />
           </>
         )}
@@ -189,19 +196,56 @@ const CostTag = ({
 };
 
 export const PlaceTags = ({
+  tripId,
+  placeId,
   duration,
   type,
   cost,
 }: {
+  tripId: number;
+  placeId: number;
   duration?: number | null;
-  type?: string | null;
+  type?: PlaceType | null;
   cost?: number | null;
 }) => {
+  const queryClient = useQueryClient();
+  const putPlaceAction = useMutation({
+    mutationFn: api.trips.putPlace,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: api.trips.keys.place(tripId) });
+    },
+  });
+  const pathParams = { tripId, placeId };
+
   return (
     <div className="flex gap-2">
-      <DurationTag value={duration} onChange={console.log} />
-      <TypeTag value={type} onChange={console.log} />
-      <CostTag value={cost} onChange={console.log} />
+      <DurationTag
+        value={duration}
+        onChange={(value) =>
+          putPlaceAction.mutate({
+            pathParams,
+            data: { duration: value },
+          })
+        }
+      />
+      <TypeTag
+        value={type}
+        onChange={(value) =>
+          putPlaceAction.mutate({
+            pathParams,
+            data: { type: value },
+          })
+        }
+      />
+      <CostTag
+        value={cost}
+        onChange={(value) =>
+          putPlaceAction.mutate({
+            pathParams,
+            data: { cost: value },
+          })
+        }
+      />
     </div>
   );
 };

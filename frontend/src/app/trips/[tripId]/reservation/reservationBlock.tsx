@@ -3,7 +3,6 @@ import { MaterialSymbol } from "@/components/MaterialSymbol";
 import dayjs from "dayjs";
 import { mappingTagValue, TagType } from "../constants";
 import { Collapse, CollapseProps, Divider } from "antd";
-import { useState } from "react";
 import { MarkdownPreview } from "@/components";
 
 export const ReservationBlock = ({
@@ -54,16 +53,15 @@ export const ReservationBlock = ({
               {reservation.endTime &&
                 ` ~ ${dayjs(reservation.endTime).format("YYYY-MM-DD hh:mm")}`}
             </div>
-            <div
-              className="flex items-center justify-center rounded-full px-2 py-1 text-xs text-white shadow-md"
-              style={{ background: "#F0BF38" }}
-            >
+            {reservation?.placeName && (
+              <div className="flex items-center justify-center rounded-full bg-orange-300 px-2 py-1 text-xs text-white shadow-md">
+                地點： {reservation.placeName}
+              </div>
+            )}
+            <div className="flex items-center justify-center rounded-full bg-yellow-300 px-2 py-1 text-xs text-white shadow-md">
               人數： {reservation.amount} 人
             </div>
-            <div
-              className="flex items-center justify-center rounded-full px-2 py-1 text-xs text-white shadow-md"
-              style={{ background: "#80A927" }}
-            >
+            <div className="flex items-center justify-center rounded-full bg-[#A4CE5B] px-2 py-1 text-xs text-white shadow-md">
               # {mappingTagValue[reservation.type as TagType]}
             </div>
           </div>

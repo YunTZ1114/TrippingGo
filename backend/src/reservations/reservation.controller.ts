@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Request, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, Request, UseGuards } from '@nestjs/common';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { TripGuard } from 'src/trips/trip.guard';
 import { ReservationService } from './reservation.service';
@@ -12,9 +12,11 @@ export class ReservationController {
 
   @Get('')
   @RequiredPermission(2)
-  async getReservation(@Request() req) {
+  async getReservation(@Request() req, @Query('placeId') placeId?: number) {
     const { tripId } = req;
-    const reservations = await this.reservationService.getReservations(tripId);
+    const reservations = placeId
+      ? await this.reservationService.getReservation({ tripId, placeId })
+      : await this.reservationService.getReservations(tripId);
 
     return { data: reservations };
   }

@@ -6,6 +6,8 @@ import { TripMemberService } from './tripMember.service';
 import { TripGuard } from 'src/trips/trip.guard';
 import { UpdateTripMemberDto } from './tripMember.dto';
 import { PermissionsText } from 'src/types/tripMember.type';
+import { PlaceService } from 'src/places/place.service';
+import { PlaceCommentService } from 'src/placeComments/placeComment.service';
 
 @Controller('trips/:tripId/trip-members')
 @UseGuards(AuthGuard, TripGuard)
@@ -13,6 +15,8 @@ export class TripMemberController {
   constructor(
     private readonly databaseService: DatabaseService,
     private readonly tripMemberService: TripMemberService,
+    private readonly placeService: PlaceService,
+    private readonly placeCommentService: PlaceCommentService,
   ) {}
 
   @Get('')
@@ -25,7 +29,11 @@ export class TripMemberController {
   @Post('')
   @RequiredPermission(PermissionsText.CREATOR)
   async createTripMembers(@Param('tripId') tripId: number, @Body('memberIds') memberIds: number[]) {
-    if (memberIds?.length) await this.tripMemberService.createTripMembers(tripId, memberIds);
+    if (!memberIds?.length) return { message: 'Member IDs array is required and cannot be empty' };
+    await this.databaseService.executeTransaction(async () => {
+      await this.tripMemberService.createTripMembers(tripId, memberIds);
+      await this.placeCommentService.createPlaceCommentByTripMember(memberIds);
+    });
 
     return {
       message: 'Add members in trip successfully',
@@ -58,15 +66,22 @@ export class TripMemberController {
   }
 
   @Delete('/:tripMemberId')
-  @RequiredPermission(PermissionsText.EDITOR)
+  @RequiredPermission(PermissionsText.VIEWER)
   async deleteTripMembers(@Request() req, @Param('tripMemberId') tripMemberId: number) {
     const { userId, userPermission } = req;
 
-    if (userPermission === PermissionsText.CREATOR && userId !== tripMemberId) {
-      await this.tripMemberService.deleteTripMembers([tripMemberId]);
+    const canDelete =
+      (userPermission === PermissionsText.CREATOR && userId !== tripMemberId) ||
+      (userPermission !== PermissionsText.CREATOR && userId === tripMemberId);
+
+    if (!canDelete) {
+      throw new HttpException('You do not have permission to delete this member', HttpStatus.FORBIDDEN);
     }
 
-    if (userPermission !== PermissionsText.CREATOR && userId === tripMemberId) await this.tripMemberService.deleteTripMembers([tripMemberId]);
+    await this.databaseService.executeTransaction(async () => {
+      await this.tripMemberService.deleteTripMembers([tripMemberId]);
+      await this.placeCommentService.deletePlaceCommentByTripMember(tripMemberId);
+    });
 
     return {
       message: 'Delete members in trip successfully',

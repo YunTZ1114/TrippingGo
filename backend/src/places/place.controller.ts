@@ -6,11 +6,17 @@ import { RequiredPermission } from 'src/decorators/required-permission.decorator
 import { BasePlace } from 'src/types/place.type';
 import { PlaceAttributesDto } from './place.dto';
 import { PermissionsText } from 'src/types/tripMember.type';
+import { PlaceCommentService } from 'src/placeComments/placeComment.service';
+import { DatabaseService } from 'src/database/database.service';
 
 @Controller('trips/:tripId/places')
 @UseGuards(AuthGuard, TripGuard)
 export class PlaceController {
-  constructor(private readonly placeService: PlaceService) {}
+  constructor(
+    private readonly databaseService: DatabaseService,
+    private readonly placeService: PlaceService,
+    private readonly placeCommentService: PlaceCommentService,
+  ) {}
 
   @Get('')
   @RequiredPermission(PermissionsText.VIEWER)
@@ -24,7 +30,11 @@ export class PlaceController {
   @Post('')
   @RequiredPermission(PermissionsText.EDITOR)
   async createPlace(@Param('tripId') tripId: number, @Body() basePlace: BasePlace) {
-    const placeId = await this.placeService.createPlace({ tripId, ...basePlace });
+    const placeId = await this.databaseService.executeTransaction(async () => {
+      const placeId = await this.placeService.createPlace({ tripId, ...basePlace });
+      await this.placeCommentService.createPlaceComment({ placeId });
+      return placeId;
+    });
 
     return { data: { placeId } };
   }
@@ -39,8 +49,11 @@ export class PlaceController {
 
   @Delete('/:placeId')
   @RequiredPermission(PermissionsText.EDITOR)
-  async deletePlace(@Param('tripId') tripId: number) {
-    await this.placeService.deletePlace(tripId);
+  async deletePlace(@Param('placeId') placeId: number) {
+    await this.databaseService.executeTransaction(async () => {
+      await this.placeService.deletePlace(placeId);
+      await this.placeCommentService.deletePlaceComment(placeId);
+    });
 
     return { message: 'Delete reservation in trip successfully' };
   }

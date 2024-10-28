@@ -1,4 +1,4 @@
-import { Injectable, CanActivate, ExecutionContext, UnauthorizedException } from '@nestjs/common';
+import { Injectable, CanActivate, ExecutionContext, ForbiddenException } from '@nestjs/common';
 import { Request } from 'express';
 import { Reflector } from '@nestjs/core';
 import { TripMemberService } from '../tripMembers/tripMember.service';
@@ -27,7 +27,7 @@ export class TripGuard implements CanActivate {
 
       return permissions >= requiredPermission;
     } catch (error) {
-      throw new UnauthorizedException('Invalid permissionCode : ', error.message);
+      throw new ForbiddenException('Invalid permissionCode : ', error.message);
     }
   }
 }

@@ -42,8 +42,8 @@ export const AddReservationModal = ({
     postReservationAction.mutate({
       pathParams: { tripId },
       data: {
-        reservationTime: reservationTime.toDate(),
-        endTime: endTime?.toDate(),
+        reservationTime: reservationTime.toISOString(),
+        endTime: endTime?.toISOString(),
         ...value,
       },
     });

@@ -1,96 +1,58 @@
 import React, { useEffect, useRef, useState } from "react";
-import { HeartFilled } from "@ant-design/icons"; // 用於顯示評分的圖示
-import { MaterialSymbol } from "@/components/MaterialSymbol";
 import { FavoriteRate } from "./FavoriteRate";
-import { Avatar, Slider, Switch } from "antd";
+import { Avatar, Slider } from "antd";
 import "./../../styles.css";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { api } from "@/api";
+import { Loading, TextArea } from "@/components";
+import { PlaceComment } from "@/api/trips";
+import { useTripContext } from "../../../contexts";
 
-const tripMemberData = [
-  {
-    id: 8,
-    avatar:
-      "https://lh3.googleusercontent.com/a/ACg8ocKM9eaA-2AsYaAG4VYo0Yd555L6de_jnja_7x24alyBzDBb6G9A=s96-c",
-    nickname: "Rex",
-    role: "CREATOR",
-  },
-  {
-    id: 12,
-    avatar: null,
-    nickname: "Eva",
-    role: "EDITOR",
-  },
-  {
-    id: 15,
-    avatar:
-      "https://lh3.googleusercontent.com/a/ACg8ocI73v1mYLFYs3JYTVnisqZ6ZZOJGP6OsJ28QubQ8M5aADeoQF4A-Q=s96-c",
-    nickname: "Eeeva",
-    role: "VIEWER",
-  },
-];
-
-const apiComments = [
-  {
-    id: 1,
-    tripMemberId: 8,
-    comment: "旁邊的ㄘㄨㄚˋ冰很好吃",
-    rate: 5,
-    isOwner: true,
-  },
-  {
-    id: 2,
-    tripMemberId: 12,
-    comment: "我不想去.....",
-    rate: null,
-    isOwner: false,
-  },
-  {
-    id: 3,
-    tripMemberId: 15,
-    comment: "上面去吃大便啦",
-    rate: 3,
-    isOwner: false,
-  },
-];
-
-const getTripMember = (tripMemberId: number) => {
-  return tripMemberData.find((member) => member.id === tripMemberId);
-};
-
-type CommentType = {
-  id: number;
-  tripMemberId: number;
-  comment: string;
-  rate: null | number;
-  isOwner: boolean;
-};
-
-interface CommentProps extends CommentType {
-  onRateChange: (value: number) => void;
+interface CommentProps extends PlaceComment {
+  onChange: ({ comment, rating }: { comment: string; rating: number }) => void;
 }
-const Comment = ({ onRateChange, ...comment }: CommentProps) => {
-  const [showSlider, setShowSlider] = useState(false);
-  const isEditing = useRef(false);
-  const [rate, setRate] = useState(comment.rate ?? 0);
 
-  const tripMember = getTripMember(comment.tripMemberId);
+const Comment = ({ onChange, ...placeComment }: CommentProps) => {
+  const { tripMembers } = useTripContext();
+
+  const getTripMember = (tripMemberId: number) => {
+    return tripMembers.find((member) => member.id === tripMemberId);
+  };
+
+  const tripMember = getTripMember(placeComment.tripMemberId);
   const { avatar, nickname } = tripMember || {
     avatar: null,
     nickname: "Unknown",
   };
 
-  const handleFinish = () => {
-    onRateChange(rate);
-    isEditing.current = false;
-    setShowSlider(false);
+  const [showSlider, setShowSlider] = useState(false);
+  const [rating, setRating] = useState(placeComment.rating ?? 0);
+  const [comment, setComment] = useState(placeComment.comment ?? "");
+  const isEditing = useRef(false);
+
+  const initialComment = useRef(placeComment.comment ?? "");
+  const initialRating = useRef(placeComment.rating ?? 0);
+
+  const handleChange = () => {
+    if (
+      comment !== initialComment.current ||
+      rating !== initialRating.current
+    ) {
+      onChange({ rating, comment });
+      initialComment.current = comment;
+      initialRating.current = rating;
+      isEditing.current = false;
+      setShowSlider(false);
+    }
   };
 
   useEffect(() => {
     if (!isEditing.current) return;
-    document.addEventListener("mouseup", handleFinish);
+    document.addEventListener("mouseup", handleChange);
     return () => {
-      document.removeEventListener("mouseup", handleFinish);
+      document.removeEventListener("mouseup", handleChange);
     };
-  }, [rate]);
+  }, [rating, comment]);
 
   return (
     <div className="mb-4 flex items-center">
@@ -102,8 +64,24 @@ const Comment = ({ onRateChange, ...comment }: CommentProps) => {
       />
 
       <div className="flex w-full items-center justify-between">
-        <span className="text-xs text-gray-600">{comment.comment}</span>
-        {showSlider && comment.isOwner ? (
+        <span className="w-full pr-3 text-xs text-gray-600">
+          {placeComment.isOwner ? (
+            <TextArea
+              className="text-gray-600"
+              size="small"
+              placeholder="留言..."
+              value={comment}
+              onChange={(e) => {
+                setComment(e.target.value);
+              }}
+              onBlur={handleChange}
+              autoSize={{ minRows: 1, maxRows: 5 }}
+            />
+          ) : (
+            placeComment.comment
+          )}
+        </span>
+        {showSlider && placeComment.isOwner ? (
           <div
             className="flex items-center gap-2"
             onMouseLeave={() => !isEditing.current && setShowSlider(false)}
@@ -113,19 +91,15 @@ const Comment = ({ onRateChange, ...comment }: CommentProps) => {
               min={1}
               max={5}
               step={1}
-              defaultValue={rate}
-              onChange={setRate}
+              defaultValue={rating}
+              onChange={setRating}
               styles={{ track: { backgroundColor: "#E77F6C" } }}
               onFocus={() => {
                 isEditing.current = true;
               }}
-              onBlur={() => {
-                onRateChange(rate);
-                isEditing.current = false;
-                setShowSlider(false);
-              }}
+              onBlur={handleChange}
             />
-            <div className="mr-1 text-[12px] text-primary">{rate}</div>
+            <div className="mr-1 text-[12px] text-primary">{rating}</div>
           </div>
         ) : (
           <div
@@ -133,7 +107,7 @@ const Comment = ({ onRateChange, ...comment }: CommentProps) => {
               setShowSlider(true);
             }}
           >
-            <FavoriteRate iconSize={16} rating={comment.rate} />
+            <FavoriteRate iconSize={16} rating={placeComment.rating} />
           </div>
         )}
       </div>
@@ -141,23 +115,55 @@ const Comment = ({ onRateChange, ...comment }: CommentProps) => {
   );
 };
 
-export const CommentList = () => {
-  const [rate, setRate] = useState(
-    apiComments.filter(({ isOwner }) => isOwner)[0].rate,
-  );
+export const CommentList = ({
+  tripId,
+  placeId,
+}: {
+  tripId: number;
+  placeId: number;
+}) => {
+  const pathParams = { tripId, placeId };
+  const { data: placeComments, isLoading } = useQuery({
+    queryKey: api.trips.keys.placeComment(tripId, placeId),
+    queryFn: async () => await api.trips.getPlaceComments({ pathParams }),
+  });
+
+  const queryClient = useQueryClient();
+  const putPlaceCommentAction = useMutation({
+    mutationFn: api.trips.putPlaceComments,
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: api.trips.keys.placeComment(tripId, placeId),
+      });
+    },
+  });
 
   return (
     <div className="comment-list">
-      {apiComments.map((comment) => {
-        return (
-          <Comment
-            key={comment.id}
-            {...comment}
-            rate={comment.isOwner ? rate : comment.rate}
-            onRateChange={setRate}
-          />
-        );
-      })}
+      {isLoading ? (
+        <Loading />
+      ) : (
+        placeComments
+          ?.sort((_, b) => (b.isOwner ? 1 : -1))
+          .map((item) => {
+            return (
+              <Comment
+                key={item.id}
+                {...item}
+                rating={item.rating}
+                onChange={(value) =>
+                  putPlaceCommentAction.mutate({
+                    pathParams: { ...pathParams, placeCommentId: item.id },
+                    data: {
+                      rating: value.rating,
+                      comment: value.comment,
+                    },
+                  })
+                }
+              />
+            );
+          })
+      )}
     </div>
   );
 };
