@@ -53,7 +53,7 @@ export const PlaceDetail = ({
     {
       key: PlaceDetailType.RESERVATIONS,
       label: "預約",
-      children: <Reservations placeId={placeId} />,
+      children: <Reservations tripId={tripId} placeId={placeId} />,
     },
     { disabled: true, key: PlaceDetailType.EXPENSES, label: "帳本" },
   ];

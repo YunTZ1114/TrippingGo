@@ -4,13 +4,18 @@ import { BaseReservation, Reservation } from "./interfaces";
 
 export const reservationsKeys = {
   reservation: (tripId: number) => ["trips", tripId, "reservation"] as const,
+  placeReservation: (tripId: number, placeId: number) =>
+    ["trips", tripId, "reservation", placeId] as const,
 };
 
 export const getReservations = async ({
   pathParams,
-}: APIRequestConfig<never, never, { tripId: number }>) => {
+  params,
+}: APIRequestConfig<{ placeId?: number }, never, { tripId: number }>) => {
   const url = `/trips/${pathParams?.tripId}/reservations`;
-  const res = await baseInstance.get<APIResponseData<Reservation[]>>(url);
+  const res = await baseInstance.get<APIResponseData<Reservation[]>>(url, {
+    params,
+  });
   return res.data.data;
 };
 

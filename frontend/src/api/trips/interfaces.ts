@@ -83,6 +83,8 @@ export interface BaseReservation {
   reservationTime: string;
   endTime?: string | null;
   tripMemberId: number;
+  placeId?: number;
+  placeName?: string | null;
   amount: number;
   note?: string | null;
   description?: string | null;
