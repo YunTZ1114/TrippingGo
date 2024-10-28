@@ -6,6 +6,33 @@ import { BaseReservation } from 'src/types/reservation.type';
 export class ReservationService {
   constructor(private readonly databaseService: DatabaseService) {}
 
+  async getReservation({ tripId, placeId }: { tripId: number; placeId: number }) {
+    const reservations = await this.databaseService.reservation.findMany({
+      where: {
+        tripMember: {
+          tripId,
+        },
+        placeId,
+        isDeleted: false,
+      },
+      include: {
+        place: {
+          select: {
+            name: true,
+          },
+        },
+      },
+      orderBy: {
+        id: 'desc',
+      },
+    });
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    return reservations.map(({ isDeleted, createdAt, place, ...other }) => {
+      return { placeName: place.name, ...other };
+    });
+  }
+
   async getReservations(tripId: number) {
     const reservations = await this.databaseService.reservation.findMany({
       where: {
@@ -14,18 +41,25 @@ export class ReservationService {
         },
         isDeleted: false,
       },
+      include: {
+        place: {
+          select: {
+            name: true,
+          },
+        },
+      },
       orderBy: {
         id: 'desc',
       },
     });
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    return reservations.map(({ isDeleted, createdAt, ...other }) => {
-      return { ...other };
+    return reservations.map(({ isDeleted, createdAt, place, ...other }) => {
+      return { placeName: place.name, ...other };
     });
   }
 
-  async createReservation({ type, title, reservationTime, endTime, tripMemberId, amount, note, description }: BaseReservation) {
+  async createReservation({ type, title, reservationTime, endTime, tripMemberId, placeId, amount, note, description }: BaseReservation) {
     const reservation = await this.databaseService.reservation.create({
       data: {
         type,
@@ -33,6 +67,7 @@ export class ReservationService {
         reservationTime,
         endTime,
         tripMemberId,
+        placeId,
         amount,
         note,
         description,
@@ -44,7 +79,7 @@ export class ReservationService {
 
   async updateReservation(
     reservationId: number,
-    { type, title, reservationTime, endTime, amount, note, description }: Omit<BaseReservation, 'tripMemberId'>,
+    { type, title, reservationTime, endTime, placeId, amount, note, description }: Omit<BaseReservation, 'tripMemberId'>,
   ) {
     const reservation = await this.databaseService.reservation.findUnique({
       where: {
@@ -61,6 +96,7 @@ export class ReservationService {
         type,
         title,
         reservationTime,
+        placeId,
         endTime,
         amount,
         note,

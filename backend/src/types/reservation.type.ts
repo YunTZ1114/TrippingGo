@@ -7,6 +7,7 @@ export interface BaseReservation {
   endTime?: Date;
   tripMemberId: number;
   amount: number;
+  placeId: number;
   note?: string;
   description?: string;
 }

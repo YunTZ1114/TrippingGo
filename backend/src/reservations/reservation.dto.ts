@@ -21,6 +21,10 @@ export class ReservationDto {
   amount: number;
 
   @IsOptional()
+  @IsNumber()
+  placeId: number;
+
+  @IsOptional()
   @IsString()
   note?: string;
 
