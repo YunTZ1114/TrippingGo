@@ -6,8 +6,10 @@ import { AuthModule } from 'src/auth/auth.module';
 import { TripGuard } from 'src/trips/trip.guard';
 import { TripMemberService } from './tripMember.service';
 import { TripMemberController } from './tripMember.controller';
+import { PlaceService } from 'src/places/place.service';
+import { PlaceCommentService } from 'src/placeComments/placeComment.service';
 
-const PROVIDERS = [AuthGuard, TripGuard, TokenService, DatabaseService, TripMemberService];
+const PROVIDERS = [AuthGuard, TripGuard, TokenService, DatabaseService, TripMemberService, PlaceService, PlaceCommentService];
 
 @Module({
   imports: [AuthModule],
