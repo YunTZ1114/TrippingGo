@@ -5,7 +5,7 @@ import { Avatar, Tabs, TabsProps } from "antd";
 import { Button } from "@/components";
 import { api } from "@/api";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useMemo } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { BasePlace } from "@/api/trips";
 
 enum PlaceDetailType {
@@ -113,10 +113,6 @@ const PlaceBaseInfo = ({
 };
 
 const PlaceDetail = ({ placeInfo }: { placeInfo: PlaceInfo }) => {
-  const onChange = (key: string) => {
-    console.log(key);
-  };
-
   const tabItems: TabsProps["items"] = [
     {
       key: PlaceDetailType.HOURS,
@@ -183,7 +179,7 @@ const PlaceDetail = ({ placeInfo }: { placeInfo: PlaceInfo }) => {
     },
   ];
 
-  return <Tabs centered={true} items={tabItems} onChange={onChange} />;
+  return <Tabs centered={true} items={tabItems} />;
 };
 
 export const GooglePlaceInfoCard = ({
@@ -192,12 +188,18 @@ export const GooglePlaceInfoCard = ({
   onClose,
 }: {
   tripId: number;
-
   placeInfo: PlaceInfo;
   onClose: () => void;
 }) => {
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!ref.current) return;
+    ref.current.scrollIntoView();
+  }, [placeInfo]);
+
   return (
-    <div className="mt-4 rounded-lg bg-white p-4">
+    <div ref={ref} className="mt-4 rounded-lg bg-white p-4">
       <PlaceBaseInfo tripId={tripId} placeInfo={placeInfo} onClose={onClose} />
       <PlaceDetail placeInfo={placeInfo} />
     </div>

@@ -1,7 +1,7 @@
 import { MaterialSymbol } from "@/components/MaterialSymbol";
 import { FavoriteRate } from "./FavoriteRate";
 import { PlaceTags } from "./PlaceTags";
-import { Place } from "@/api/trips";
+import { MarkerIconType, Place } from "@/api/trips";
 
 export const PlaceBaseInfo = ({ place }: { place: Place }) => {
   return (
@@ -31,8 +31,8 @@ export const PlaceBaseInfo = ({ place }: { place: Place }) => {
           tripId={place.tripId}
           placeId={place.id}
           duration={place.duration}
-          type={place.type}
           cost={place.cost}
+          icon={place.icon as MarkerIconType}
         />
       </div>
       <div className="text-[12px] text-gray-400"></div>

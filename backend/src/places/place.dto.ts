@@ -47,4 +47,8 @@ export class PlaceAttributesDto {
   @IsOptional()
   @IsString()
   type?: PlaceType;
+
+  @IsOptional()
+  @IsString()
+  icon: string;
 }

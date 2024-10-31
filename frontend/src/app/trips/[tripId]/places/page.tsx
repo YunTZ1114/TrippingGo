@@ -1,6 +1,6 @@
 "use client";
 import { useJsApiLoader } from "@react-google-maps/api";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { PlaceSearchBar } from "./components/PlaceSearchBar";
 import { MapDisplay } from "./components/MapDisplay";
 import { PageBlock } from "../components";
@@ -18,8 +18,9 @@ const PlacePage = ({ params }: { params: { tripId: string } }) => {
   const [location, setLocation] = useState<google.maps.LatLngLiteral | null>(
     null,
   );
+  const placesKeep = useRef<Place[]>([]);
   const [placeInfo, setPlaceInfo] = useState<PlaceInfo | null>(null);
-  const [openCard, setOpenCard] = useState<number>();
+  const [focusPlaceId, setFocusPlaceId] = useState<number | "search">();
   const [selectedLocation, setSelectedLocation] =
     useState<google.maps.LatLngLiteral | null>(null);
 
@@ -44,21 +45,20 @@ const PlacePage = ({ params }: { params: { tripId: string } }) => {
       ({ googlePlaceId }) => googlePlaceId === placeId,
     );
     if (placeItem) {
-      setOpenCard(placeItem.id);
+      setFocusPlaceId(placeItem.id);
       setPlaceInfo(null);
       return;
     }
-
+    setFocusPlaceId("search");
     setPlaceInfo(placeInfo);
   };
 
   const handleCardOpenChange = (isOpen: boolean, place: Place) => {
-    console.log(isOpen, place);
     if (!isOpen) {
-      setOpenCard(undefined);
+      setFocusPlaceId(undefined);
       return;
     }
-    setOpenCard(place.id);
+    setFocusPlaceId(place.id);
     setSelectedLocation({ lat: +place.locationLat, lng: +place.locationLng });
   };
 
@@ -87,6 +87,17 @@ const PlacePage = ({ params }: { params: { tripId: string } }) => {
     fetchLocation();
   }, [isLoaded]);
 
+  useEffect(() => {
+    if (!places) return;
+    if (
+      placesKeep.current.length > 0 &&
+      placesKeep.current.length < places.length
+    ) {
+      setFocusPlaceId(places[0].id);
+    }
+    placesKeep.current = places;
+  }, [places]);
+
   if (loadError) return <div>加載錯誤: {loadError.message}</div>;
 
   return (
@@ -109,7 +120,7 @@ const PlacePage = ({ params }: { params: { tripId: string } }) => {
           )}
           {places?.map((place) => (
             <PlaceInfoCard
-              open={openCard === place.id}
+              open={focusPlaceId === place.id}
               onOpenChange={(v) => handleCardOpenChange(v, place)}
               key={place.id}
               place={place}
@@ -119,7 +130,14 @@ const PlacePage = ({ params }: { params: { tripId: string } }) => {
       </PageBlock>
 
       {isLoaded && (
-        <MapDisplay location={selectedLocation || location} center={center} />
+        <MapDisplay
+          focusPlaceId={focusPlaceId}
+          location={selectedLocation || location}
+          center={center}
+          placeInfo={placeInfo}
+          places={places}
+          onMarkerClick={(place) => handleCardOpenChange(true, place)}
+        />
       )}
     </div>
   );
