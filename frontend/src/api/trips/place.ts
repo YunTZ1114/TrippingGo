@@ -7,15 +7,51 @@ export const placeKeys = {
     ["trips", tripId, "place", placeId, "comment"] as const,
 };
 
-export enum PlaceType {
-  TRANSPORTATION = "TRANSPORTATION",
-  ACCOMMODATION = "ACCOMMODATION",
-  RESTAURANT = "RESTAURANT",
-  HEALTH_BEAUTY = "HEALTH_BEAUTY",
-  ENTERTAINMENT = "ENTERTAINMENT",
-  OUTDOOR_ACTIVITY = "OUTDOOR_ACTIVITY",
-  OTHER = "OTHER",
-}
+export const foodIcons = [
+  "restaurant",
+  "lunch_dining",
+  "cake",
+  "local_cafe",
+  "fastfood",
+  "local_bar",
+  "bakery_dining",
+  "ramen_dining",
+  "local_dining",
+  "icecream",
+  "dinner_dining",
+  "brunch_dining",
+  "kebab_dining",
+  "grocery",
+  "emoji_food_beverage",
+] as const;
+
+export const trafficIcons = [
+  "directions_car",
+  "flight",
+  "directions_walk",
+  "directions_bus",
+  "train",
+  "directions_bike",
+  "pedal_bike",
+  "directions_boat",
+  "local_taxi",
+  "sailing",
+  "tram",
+  "motorcycle",
+  "snowmobile",
+  "gondola_lift",
+] as const;
+
+export const otherIcons = ["flag"] as const;
+
+export const markerIcons = [
+  "flag",
+  ...trafficIcons,
+  ...foodIcons,
+  ...otherIcons,
+] as const;
+
+export type MarkerIconType = (typeof markerIcons)[number];
 
 export interface BasePlace {
   locationLat: number;
@@ -28,10 +64,10 @@ export interface BasePlace {
 }
 
 export interface PlaceAttributes {
-  type?: PlaceType | null;
   duration?: number | null;
   cost?: number | null;
   rating?: number;
+  icon?: MarkerIconType;
 }
 
 export interface Place extends BasePlace, PlaceAttributes {

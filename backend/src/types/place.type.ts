@@ -27,6 +27,7 @@ export interface PlaceAttributes {
   duration?: number;
   cost?: number;
   rating?: number;
+  icon: string;
 }
 
 export interface Place extends BasePlace, PlaceAttributes, CommonFields {}

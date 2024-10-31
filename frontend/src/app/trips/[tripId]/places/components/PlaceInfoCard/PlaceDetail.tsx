@@ -18,10 +18,6 @@ export const PlaceDetail = ({
   placeId: number;
   weekdayText?: string[];
 }) => {
-  const onChange = (key: string) => {
-    console.log(key);
-  };
-
   const tabItems: TabsProps["items"] = [
     {
       key: PlaceDetailType.HOURS,
@@ -58,5 +54,5 @@ export const PlaceDetail = ({
     { disabled: true, key: PlaceDetailType.EXPENSES, label: "帳本" },
   ];
 
-  return <Tabs centered={true} items={tabItems} onChange={onChange} />;
+  return <Tabs centered={true} items={tabItems} />;
 };

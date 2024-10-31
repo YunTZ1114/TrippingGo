@@ -78,20 +78,23 @@ const Login = () => {
   return (
     <>
       <div className="mb-5 text-headline-large">開始跟朋友規劃一段旅行吧！</div>
-      <GoogleOAuthProvider
-        clientId={`${process.env.NEXT_PUBLIC_GOOGLE_OAUTH_ID}`}
-      >
-        <div>
+      <div className="flex w-full items-center justify-center">
+        <GoogleOAuthProvider
+          clientId={`${process.env.NEXT_PUBLIC_GOOGLE_OAUTH_ID}`}
+        >
           <GoogleLogin
+            width="400"
+            theme="outline"
             shape="pill"
-            logo_alignment="center"
+            type="standard"
             onSuccess={handleLoginSuccess}
             onError={() => {
               console.log("Login Failed");
             }}
           />
-        </div>
-      </GoogleOAuthProvider>
+        </GoogleOAuthProvider>{" "}
+      </div>
+
       <div className="flex items-center gap-3">
         <div className="w-full border-b border-b-gray-300" />
         或

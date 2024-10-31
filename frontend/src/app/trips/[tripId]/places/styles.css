@@ -1,3 +1,6 @@
 .place-time-input input {
   padding: 0px 0px 0px 4px;
 }
+.place-marker-icon {
+  font-family: "Material Symbols Rounded" !important;
+}

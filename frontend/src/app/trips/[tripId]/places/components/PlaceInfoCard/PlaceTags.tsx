@@ -1,19 +1,17 @@
 import { MaterialSymbol } from "@/components/MaterialSymbol";
 import { Tag } from "@/components/Tag";
-import { Dropdown, InputNumber, MenuProps, Space } from "antd";
-import { useEffect, useRef, useState } from "react";
+import { Divider, Dropdown, InputNumber } from "antd";
+import { Fragment, useEffect, useRef, useState } from "react";
 import "./../../styles.css";
-import { mappingTagValue } from "../../../constants";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/api";
-import { PlaceType } from "@/api/trips";
-
-const items: MenuProps["items"] = Object.entries(mappingTagValue).map(
-  ([key, value]) => ({
-    label: value,
-    key: key,
-  }),
-);
+import {
+  foodIcons,
+  MarkerIconType,
+  otherIcons,
+  trafficIcons,
+} from "@/api/trips";
+import { classNames } from "@/utils";
 
 const DurationTag = ({
   value,
@@ -82,43 +80,76 @@ const DurationTag = ({
   );
 };
 
-const TypeTag = ({
+const MarkerIconList = ({
   value,
   onChange,
 }: {
-  value?: PlaceType | null;
-  onChange: (value?: PlaceType | null) => void;
+  value: MarkerIconType;
+  onChange: (value: MarkerIconType) => void;
 }) => {
-  const [selectValue, setSelectValue] = useState(value);
-  const onClick: MenuProps["onClick"] = ({ key }) => {
-    setSelectValue(key as PlaceType);
-    onChange(key as PlaceType);
-  };
+  return (
+    <div className="flex w-[310px] flex-col rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
+      <div className="mb-4 w-full">選擇地點圖示</div>
+      {[foodIcons, trafficIcons, otherIcons].map((icons, i) => (
+        <Fragment key={i}>
+          {!!i && <Divider />}
+          <div className="flex w-full flex-wrap gap-2">
+            {icons.map((iconName) => (
+              <div
+                onClick={() => onChange(iconName)}
+                key={iconName}
+                className={classNames(
+                  "group flex h-8 w-8 items-center justify-center gap-2 rounded-full transition-all duration-200 hover:shadow-md",
+                  iconName === value
+                    ? "bg-primary"
+                    : "cursor-pointer bg-gray-50 hover:bg-gray-400",
+                )}
+              >
+                <MaterialSymbol
+                  icon={iconName}
+                  size={16}
+                  className={classNames(
+                    "transition-all duration-200",
+                    iconName === value
+                      ? "text-white"
+                      : "text-gray-600 group-hover:text-white",
+                  )}
+                />
+              </div>
+            ))}
+          </div>
+        </Fragment>
+      ))}
+    </div>
+  );
+};
 
+const IconTag = ({
+  value,
+  onChange,
+}: {
+  value: MarkerIconType;
+  onChange: (value: MarkerIconType) => void;
+}) => {
+  const [open, setOpen] = useState(false);
   return (
     <Dropdown
-      menu={{
-        items,
-        selectable: true,
-        selectedKeys: selectValue ? [selectValue] : undefined,
-        onClick,
+      dropdownRender={() => {
+        return <MarkerIconList value={value} onChange={onChange} />;
       }}
-      trigger={["click"]}
+      onOpenChange={setOpen}
     >
-      <Tag className="group/type cursor-pointer bg-[#A4CE5B]">
-        <div className="flex items-center gap-2">
-          <MaterialSymbol icon="sell" size={12} />
-          {selectValue ? (
-            mappingTagValue[selectValue as keyof typeof mappingTagValue]
-          ) : (
-            <div className="text-white/60">設定類別</div>
-          )}
-          <MaterialSymbol
-            icon="stat_minus_1"
-            size={12}
-            className="w-0 overflow-hidden transition-all group-hover/type:w-3"
-          />
-        </div>
+      <Tag
+        className={classNames(
+          "cursor-pointer",
+          open ? "bg-[#7eadc4]" : "bg-[#90bfd7]",
+        )}
+      >
+        <MaterialSymbol
+          icon={value}
+          size={16}
+          className="text-white transition-all duration-200"
+        />
       </Tag>
     </Dropdown>
   );
@@ -199,14 +230,14 @@ export const PlaceTags = ({
   tripId,
   placeId,
   duration,
-  type,
   cost,
+  icon,
 }: {
   tripId: number;
   placeId: number;
   duration?: number | null;
-  type?: PlaceType | null;
   cost?: number | null;
+  icon: MarkerIconType;
 }) => {
   const queryClient = useQueryClient();
   const putPlaceAction = useMutation({
@@ -219,21 +250,21 @@ export const PlaceTags = ({
 
   return (
     <div className="flex gap-2">
+      <IconTag
+        value={icon}
+        onChange={(value) =>
+          putPlaceAction.mutate({
+            pathParams,
+            data: { icon: value },
+          })
+        }
+      />
       <DurationTag
         value={duration}
         onChange={(value) =>
           putPlaceAction.mutate({
             pathParams,
             data: { duration: value },
-          })
-        }
-      />
-      <TypeTag
-        value={type}
-        onChange={(value) =>
-          putPlaceAction.mutate({
-            pathParams,
-            data: { type: value },
           })
         }
       />

@@ -40,7 +40,7 @@ export class PlaceService {
     return place.id;
   }
 
-  async updatePlace({ placeId, type, duration, cost, rating }: PlaceAttributes & { placeId: number }) {
+  async updatePlace({ placeId, type, duration, cost, rating, icon }: PlaceAttributes & { placeId: number }) {
     const place = await this.databaseService.place.findUnique({
       where: {
         id: placeId,
@@ -57,6 +57,7 @@ export class PlaceService {
         duration,
         cost,
         rating,
+        icon,
       },
     });
 
