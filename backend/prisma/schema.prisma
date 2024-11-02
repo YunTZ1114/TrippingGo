@@ -147,7 +147,6 @@ model Place {
   reservations  Reservation[]
   placeDurations PlaceDuration[]
 
-
   @@map("places")
 }
 
