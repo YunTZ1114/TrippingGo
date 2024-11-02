@@ -1,5 +1,4 @@
 import { IsArray, IsNumber, IsOptional, IsString } from 'class-validator';
-import { PlaceType } from 'src/types/place.type';
 
 export class PlaceDto {
   @IsOptional()
@@ -43,10 +42,6 @@ export class PlaceAttributesDto {
   @IsOptional()
   @IsNumber()
   cost?: number;
-
-  @IsOptional()
-  @IsString()
-  type?: PlaceType;
 
   @IsOptional()
   @IsString()

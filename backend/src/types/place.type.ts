@@ -1,15 +1,5 @@
 import { CommonFields } from './common.type';
 
-export enum PlaceType {
-  TRANSPORTATION = 'TRANSPORTATION',
-  ACCOMMODATION = 'ACCOMMODATION',
-  RESTAURANT = 'RESTAURANT',
-  HEALTH_BEAUTY = 'HEALTH_BEAUTY',
-  ENTERTAINMENT = 'ENTERTAINMENT',
-  OUTDOOR_ACTIVITY = 'OUTDOOR_ACTIVITY',
-  OTHER = 'OTHER',
-}
-
 export interface BasePlace {
   id: number;
   tripId: number;
@@ -23,7 +13,6 @@ export interface BasePlace {
 }
 
 export interface PlaceAttributes {
-  type?: PlaceType;
   duration?: number;
   cost?: number;
   rating?: number;

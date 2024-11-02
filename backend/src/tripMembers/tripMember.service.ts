@@ -1,7 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { isNumber } from 'class-validator';
 import { DatabaseService } from 'src/database/database.service';
-import { BaseTripMember, PermissionsText } from 'src/types/tripMember.type';
+import { AssignablePermissions, BaseTripMember, PermissionsText } from 'src/types/tripMember.type';
 
 @Injectable()
 export class TripMemberService {
@@ -83,6 +83,8 @@ export class TripMemberService {
         switch (permissions) {
           case PermissionsText.DELETED:
             return 'DELETED';
+          case PermissionsText.PENDING:
+            return 'PENDING';
           case PermissionsText.VIEWER:
             return 'VIEWER';
           case PermissionsText.EDITOR:
@@ -128,7 +130,7 @@ export class TripMemberService {
     );
   }
 
-  async updateTripMemberPermission(permissionUpdates: { id: number; permissions: PermissionsText }[]) {
+  async updateTripMemberPermission(permissionUpdates: { id: number; permissions: AssignablePermissions }[]) {
     await Promise.all(
       permissionUpdates.map(({ id, permissions }) =>
         this.databaseService.tripMember.update({
@@ -137,6 +139,32 @@ export class TripMemberService {
         }),
       ),
     );
+  }
+
+  async acceptInvitation(userId: number, tripId: number) {
+    const invitation = await this.databaseService.tripMember.findFirst({
+      where: {
+        tripId,
+        userId,
+        permissions: PermissionsText.PENDING,
+        isDeleted: false,
+      },
+    });
+
+    if (!invitation) {
+      throw new HttpException('Invalid or expired invitation', HttpStatus.BAD_REQUEST);
+    }
+
+    const updatedMember = await this.databaseService.tripMember.update({
+      where: {
+        id: invitation.id,
+      },
+      data: {
+        permissions: PermissionsText.VIEWER,
+      },
+    });
+
+    return updatedMember;
   }
 
   async deleteTripMembers(ids: number[]) {

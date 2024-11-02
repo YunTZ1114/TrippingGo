@@ -64,20 +64,13 @@ export const InviteModal = ({
         form={form}
         onFinish={handleFinish}
       >
-        <Form.Item rules={[{ required: true }]} name="name" label="權限">
-          <Select
-            size="large"
-            variant="filled"
-            options={ROLE_OPTIONS.filter(({ value }) => value !== Role.CREATOR)}
-          />
-        </Form.Item>
         <Form.Item rules={[{ required: true }]} name="members" label="使用者">
           <UserSelect expectUserId={tripMembersId} />
         </Form.Item>
       </Form>
       <Button
         type="primary"
-        className="w-full rounded-full mt-5"
+        className="mt-5 w-full rounded-full"
         size="large"
         loading={postMemberAction.isPending}
         onClick={() => {

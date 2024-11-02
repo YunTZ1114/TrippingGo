@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, HttpException, HttpStatus, Param, Post, Put, Request, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpException, HttpStatus, Param, Patch, Post, Put, Request, UseGuards } from '@nestjs/common';
 import { DatabaseService } from 'src/database/database.service';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { RequiredPermission } from 'src/decorators/required-permission.decorator';
@@ -6,7 +6,6 @@ import { TripMemberService } from './tripMember.service';
 import { TripGuard } from 'src/trips/trip.guard';
 import { UpdateTripMemberDto } from './tripMember.dto';
 import { PermissionsText } from 'src/types/tripMember.type';
-import { PlaceService } from 'src/places/place.service';
 import { PlaceCommentService } from 'src/placeComments/placeComment.service';
 
 @Controller('trips/:tripId/trip-members')
@@ -15,7 +14,6 @@ export class TripMemberController {
   constructor(
     private readonly databaseService: DatabaseService,
     private readonly tripMemberService: TripMemberService,
-    private readonly placeService: PlaceService,
     private readonly placeCommentService: PlaceCommentService,
   ) {}
 
@@ -59,6 +57,18 @@ export class TripMemberController {
       }
       await this.tripMemberService.updateTripMember(info);
     });
+
+    return {
+      message: 'Update members in trip successfully',
+    };
+  }
+
+  @Patch('accept-invitation')
+  @RequiredPermission(PermissionsText.PENDING)
+  async acceptInvitation(@Request() req, @Param('tripId') tripId: number) {
+    const { userId } = req;
+
+    await this.tripMemberService.acceptInvitation(userId, tripId);
 
     return {
       message: 'Update members in trip successfully',

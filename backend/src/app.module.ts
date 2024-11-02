@@ -10,6 +10,7 @@ import { CheckListModule } from './checkLists/checkList.module';
 import { ReservationModule } from './reservations/reservation.module';
 import { PlaceModule } from './places/place.module';
 import { PlaceCommentModule } from './placeComments/placeComment.module';
+import { PlaceDurationModule } from './placeDuration/placeDuration.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { PlaceCommentModule } from './placeComments/placeComment.module';
     PlaceModule,
     ReservationModule,
     PlaceCommentModule,
+    PlaceDurationModule,
   ],
   controllers: [],
   providers: [],

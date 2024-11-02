@@ -7,6 +7,10 @@ export class PlaceService {
   constructor(private readonly databaseService: DatabaseService) {}
 
   async getPlaces(tripId: number) {
+    if (!tripId) {
+      throw new HttpException('Trip ID is required.', HttpStatus.BAD_REQUEST);
+    }
+
     const places = await this.databaseService.place.findMany({
       where: {
         tripId,
@@ -40,7 +44,7 @@ export class PlaceService {
     return place.id;
   }
 
-  async updatePlace({ placeId, type, duration, cost, rating, icon }: PlaceAttributes & { placeId: number }) {
+  async updatePlace({ placeId, duration, cost, rating, icon }: PlaceAttributes & { placeId: number }) {
     const place = await this.databaseService.place.findUnique({
       where: {
         id: placeId,
@@ -53,7 +57,6 @@ export class PlaceService {
     await this.databaseService.place.update({
       where: { id: placeId },
       data: {
-        type,
         duration,
         cost,
         rating,

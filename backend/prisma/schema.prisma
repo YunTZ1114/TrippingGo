@@ -80,6 +80,7 @@ model Trip {
   isDeleted    Boolean      @default(false) @map("is_deleted")
   createdAt    DateTime     @default(now()) @map("created_at") @db.Timestamp(0)
   updatedAt    DateTime     @default(now()) @updatedAt @map("updated_at") @db.Timestamp(0)
+  
   places       Place[]
   tripMembers  TripMember[]
   creator      User         @relation(fields: [creatorId], references: [id])
@@ -144,6 +145,7 @@ model Place {
   placeComments PlaceComment[]
   trip          Trip           @relation(fields: [tripId], references: [id])
   reservations  Reservation[]
+  placeDurations PlaceDuration[]
 
   @@map("places")
 }
@@ -181,4 +183,42 @@ model Reservation {
   tripMember      TripMember @relation(fields: [tripMemberId], references: [id])
 
   @@map("reservations")
+}
+
+
+model PlaceDuration {
+  id            Int       @id @default(autoincrement())
+  placeId       Int       @map("place_id")
+  date          DateTime  @db.Date
+  col           Int[]     // [a, b] where a <= b <= 144, 1 = 10 minutes
+  row           Int
+  groupNumber   Int?      @map("group_number")
+  isDeleted     Boolean   @default(false) @map("is_deleted")
+  createdAt     DateTime  @default(now()) @map("created_at") @db.Timestamp(0)
+  updatedAt     DateTime  @default(now()) @updatedAt @map("updated_at") @db.Timestamp(0)
+
+  place         Place     @relation(fields: [placeId], references: [id])
+
+  routesAsStart Route[]   @relation("RouteStart")
+  routesAsEnd   Route[]   @relation("RouteEnd")
+
+  @@map("place_durations")
+}
+
+model Route {
+  id              Int             @id @default(autoincrement())
+  startingPointId Int             @map("starting_point_id")
+  destinationId   Int             @map("destination_id")
+  travelMode      String          // BICYCLING | DRIVING | TRANSIT | WALKING
+  duration        Int
+  distance        Int
+  path            Json[]          @default([])
+  isDeleted       Boolean         @default(false) @map("is_deleted")
+  createdAt       DateTime        @default(now()) @map("created_at") @db.Timestamp(0)
+  updatedAt       DateTime        @default(now()) @updatedAt @map("updated_at") @db.Timestamp(0)
+
+  startingPoint   PlaceDuration   @relation("RouteStart", fields: [startingPointId], references: [id])
+  destination     PlaceDuration   @relation("RouteEnd", fields: [destinationId], references: [id])
+
+  @@map("routes")
 }
