@@ -7,6 +7,7 @@ export enum TripFilter {
 }
 
 export enum Role {
+  PENDING = "PENDING",
   VIEWER = "VIEWER",
   EDITOR = "EDITOR",
   CREATOR = "CREATOR",

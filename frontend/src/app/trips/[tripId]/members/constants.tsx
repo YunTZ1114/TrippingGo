@@ -4,6 +4,7 @@ import { MaterialSymbol } from "@/components/MaterialSymbol";
 import { Avatar, TableColumnType, Tooltip } from "antd";
 
 export const MAP_ROLE_TO_TEXT = {
+  [Role.PENDING]: "已邀請",
   [Role.VIEWER]: "可觀看",
   [Role.EDITOR]: "可編輯",
   [Role.CREATOR]: "擁有者",
@@ -86,7 +87,7 @@ export const EditTableColumns = (
             className:
               option.value === Role.CREATOR ? "!max-h-0 !min-h-0 !p-0" : "",
           }))}
-          disabled={value === Role.CREATOR}
+          disabled={value === Role.CREATOR || value === Role.PENDING}
         />
       </Form.Item>
     ),

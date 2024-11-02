@@ -12,36 +12,6 @@ import { DeleteConfineModal } from "../modal/DeleteConfineModal";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
-const isLoading = false;
-const members = [
-  {
-    id: 4,
-    userId: 4,
-    nickname: "Eeeva",
-    description: "null",
-    note: "null",
-    isDeleted: false,
-    createdAt: "2024-10-07T13:41:59.000Z",
-    updatedAt: "2024-10-07T13:41:59.000Z",
-    userName: "Eeeva",
-    avatar: "/default-avatar.png",
-    role: Role.CREATOR,
-  },
-  {
-    id: 5,
-    userId: 5,
-    nickname: "Eeeva2",
-    description: "null",
-    note: "null",
-    isDeleted: false,
-    createdAt: "2024-10-07T13:41:59.000Z",
-    updatedAt: "2024-10-07T13:41:59.000Z",
-    userName: "Eeeva2",
-    avatar: "/default-avatar.png",
-    role: Role.EDITOR,
-  },
-];
-
 const MembersPage = ({ params }: { params: { tripId: number } }) => {
   const {
     data: members,
