@@ -1,6 +1,7 @@
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { DatabaseService } from 'src/database/database.service';
 import { BaseTrip, TripPreview, TripFilterType } from 'src/types/trip.type';
+import { PermissionsText } from 'src/types/tripMember.type';
 
 @Injectable()
 export class TripService {
@@ -87,15 +88,20 @@ export class TripService {
           },
           select: {
             id: true,
+            userId: true,
+            permissions: true,
           },
         },
       },
     });
 
     const result = trips.map(({ tripMembers, ...others }) => {
+      const userMember = tripMembers.find((member) => member.userId === userId);
+
       return {
         ...others,
         memberAmount: tripMembers.length,
+        permissions: userMember ? PermissionsText[userMember.permissions] : null,
       };
     });
 
