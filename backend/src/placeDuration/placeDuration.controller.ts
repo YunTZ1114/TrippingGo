@@ -1,0 +1,54 @@
+import { Body, Controller, Delete, Get, Param, Patch, Post, UseGuards } from '@nestjs/common';
+import { RequiredPermission } from 'src/decorators/required-permission.decorator';
+import { PermissionsText } from 'src/types/tripMember.type';
+import { PlaceDurationService } from './placeDuration.service';
+import { AuthGuard } from 'src/auth/auth.guard';
+import { TripGuard } from 'src/trips/trip.guard';
+import { PlaceService } from 'src/places/place.service';
+import { PlaceDurationDto } from './placeDuration.dto';
+
+@Controller('trips/:tripId/place-durations')
+@UseGuards(AuthGuard, TripGuard)
+export class PlaceDurationController {
+  constructor(
+    private readonly placeService: PlaceService,
+    private readonly placeDurationService: PlaceDurationService,
+  ) {}
+
+  @Get('')
+  @RequiredPermission(PermissionsText.VIEWER)
+  async getPlace(@Param('tripId') tripId: number) {
+    const placeDurations = await this.placeDurationService.getPlaceDurations(tripId);
+
+    return { data: placeDurations };
+  }
+
+  @Post('')
+  @RequiredPermission(PermissionsText.EDITOR)
+  async createPlaceDuration(@Body() placeDurationDto: PlaceDurationDto) {
+    const placeDurationId = await this.placeDurationService.createPlaceDuration({
+      ...placeDurationDto,
+    });
+
+    return { data: { placeDurationId } };
+  }
+
+  @Patch('/:placeDurationId')
+  @RequiredPermission(PermissionsText.EDITOR)
+  async updatePlaceDuration(@Param('placeDurationId') placeDurationId: number, @Body() updatePlaceDurationDto: Omit<PlaceDurationDto, 'placeId'>) {
+    await this.placeDurationService.updatePlaceDuration({
+      id: placeDurationId,
+      ...updatePlaceDurationDto,
+    });
+
+    return { message: 'Place Duration Updated successfully' };
+  }
+
+  @Delete('/:placeDurationId')
+  @RequiredPermission(PermissionsText.EDITOR)
+  async deletePlaceDuration(@Param('placeDurationId') placeDurationId: number) {
+    await this.placeDurationService.deletePlaceDuration(placeDurationId);
+
+    return { message: 'Place Duration Deleted successfully' };
+  }
+}
