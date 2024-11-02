@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Request, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, UseGuards } from '@nestjs/common';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { TripGuard } from 'src/trips/trip.guard';
 import { PlaceService } from './place.service';
@@ -20,8 +20,7 @@ export class PlaceController {
 
   @Get('')
   @RequiredPermission(PermissionsText.VIEWER)
-  async getPlace(@Request() req) {
-    const { tripId } = req;
+  async getPlace(@Param('tripId') tripId: number) {
     const places = await this.placeService.getPlaces(tripId);
 
     return { data: places };
