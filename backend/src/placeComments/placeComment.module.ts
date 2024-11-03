@@ -7,8 +7,9 @@ import { AuthModule } from 'src/auth/auth.module';
 import { TripModule } from 'src/trips/trip.module';
 import { PlaceCommentService } from './placeComment.service';
 import { PlaceCommentController } from './placeComment.controller';
+import { PlaceService } from 'src/places/place.service';
 
-const PROVIDERS = [AuthGuard, TripGuard, TokenService, DatabaseService, PlaceCommentService];
+const PROVIDERS = [AuthGuard, TripGuard, TokenService, DatabaseService, PlaceService, PlaceCommentService];
 
 @Module({
   imports: [AuthModule, TripModule],

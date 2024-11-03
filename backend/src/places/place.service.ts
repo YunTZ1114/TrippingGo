@@ -44,7 +44,7 @@ export class PlaceService {
     return place.id;
   }
 
-  async updatePlace({ placeId, duration, cost, rating, icon }: PlaceAttributes & { placeId: number }) {
+  async updatePlace({ placeId, duration, cost, icon }: PlaceAttributes & { placeId: number }) {
     const place = await this.databaseService.place.findUnique({
       where: {
         id: placeId,
@@ -59,8 +59,41 @@ export class PlaceService {
       data: {
         duration,
         cost,
-        rating,
         icon,
+      },
+    });
+
+    return place.id;
+  }
+
+  async updateRating(placeId: number) {
+    const place = await this.databaseService.place.findUnique({
+      where: {
+        id: placeId,
+        isDeleted: false,
+      },
+    });
+
+    if (!place) throw new HttpException('The place is not found.', HttpStatus.NOT_FOUND);
+    const placeComments = await this.databaseService.placeComment.findMany({
+      where: {
+        placeId,
+        isDeleted: false,
+      },
+      select: {
+        rating: true,
+      },
+      orderBy: {
+        id: 'desc',
+      },
+    });
+
+    const rating = placeComments.reduce((total, comment) => total + comment.rating, 0) / placeComments.filter(({ rating }) => rating).length;
+
+    await this.databaseService.place.update({
+      where: { id: placeId },
+      data: {
+        rating: rating,
       },
     });
 

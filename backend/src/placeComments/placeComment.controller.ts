@@ -1,15 +1,19 @@
-import { Body, Controller, Get, Param, ParseIntPipe, Put, UseGuards, Request } from '@nestjs/common';
+import { Body, Controller, Get, Param, Put, UseGuards, Request, ParseIntPipe } from '@nestjs/common';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { TripGuard } from 'src/trips/trip.guard';
 import { RequiredPermission } from 'src/decorators/required-permission.decorator';
 import { PermissionsText } from 'src/types/tripMember.type';
 import { PlaceCommentService } from './placeComment.service';
 import { UpdatePlaceCommentDto } from './placeComment.dto';
+import { PlaceService } from 'src/places/place.service';
 
 @Controller('trips/:tripId/places/:placeId/placeComments')
 @UseGuards(AuthGuard, TripGuard)
 export class PlaceCommentController {
-  constructor(private readonly placeCommentService: PlaceCommentService) {}
+  constructor(
+    private readonly placeCommentService: PlaceCommentService,
+    private readonly placeService: PlaceService,
+  ) {}
 
   @Get('')
   @RequiredPermission(PermissionsText.VIEWER)
@@ -26,8 +30,13 @@ export class PlaceCommentController {
 
   @Put('/:placeCommentId')
   @RequiredPermission(PermissionsText.VIEWER)
-  async updatePlaceComment(@Param('placeCommentId', ParseIntPipe) placeCommentId: number, @Body() updatePlaceCommentDto: UpdatePlaceCommentDto) {
+  async updatePlaceComment(
+    @Param('placeId', ParseIntPipe) placeId: number,
+    @Param('placeCommentId', ParseIntPipe) placeCommentId: number,
+    @Body() updatePlaceCommentDto: UpdatePlaceCommentDto,
+  ) {
     await this.placeCommentService.updatePlaceComment({ placeCommentId, ...updatePlaceCommentDto });
+    await this.placeService.updateRating(placeId);
 
     return { message: 'Update place comment successfully' };
   }
