@@ -16,14 +16,33 @@ export class PlaceDurationService {
         place: { tripId },
         isDeleted: false,
       },
+      select: {
+        id: true,
+        date: true,
+        col: true,
+        row: true,
+        groupNumber: true,
+        isDeleted: true,
+        createdAt: true,
+        updatedAt: true,
+        place: {
+          select: {
+            id: true,
+            name: true,
+            icon: true,
+          },
+        },
+      },
       orderBy: {
         id: 'desc',
       },
     });
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    return placeDurations.map(({ isDeleted, createdAt, updatedAt, ...other }) => {
-      return { ...other };
+    return placeDurations.map(({ isDeleted, createdAt, updatedAt, date, ...other }) => {
+      const formattedDate = new Date(date).toISOString().split('T')[0];
+
+      return { ...other, date: formattedDate };
     });
   }
 

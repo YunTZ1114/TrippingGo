@@ -11,6 +11,7 @@ import { ReservationModule } from './reservations/reservation.module';
 import { PlaceModule } from './places/place.module';
 import { PlaceCommentModule } from './placeComments/placeComment.module';
 import { PlaceDurationModule } from './placeDuration/placeDuration.module';
+import { RouteModule } from './routes/routes.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { PlaceDurationModule } from './placeDuration/placeDuration.module';
     ReservationModule,
     PlaceCommentModule,
     PlaceDurationModule,
+    RouteModule,
   ],
   controllers: [],
   providers: [],
