@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { FavoriteRate } from "./FavoriteRate";
 import { Avatar, Slider } from "antd";
-import "./../../styles.css";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/api";
 import { Loading, TextArea } from "@/components";

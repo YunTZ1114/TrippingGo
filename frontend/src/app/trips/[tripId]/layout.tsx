@@ -53,7 +53,7 @@ const Layout = ({
       <div className="flex h-screen w-full flex-col bg-primary">
         <div className="mt-4 flex flex-1 gap-2">
           <SideBar data={data} />
-          <div className="h-full flex-1 rounded-tl-3xl bg-surface shadow-paper">
+          <div className="h-full w-0 flex-1 overflow-hidden rounded-tl-3xl bg-surface shadow-paper">
             {isLoading ? <Loading /> : children}
           </div>
         </div>

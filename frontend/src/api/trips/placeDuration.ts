@@ -14,7 +14,7 @@ interface BasePlaceDuration {
   groupNumber?: number | null;
 }
 
-interface PlaceDuration extends BasePlaceDuration {
+export interface PlaceDuration extends BasePlaceDuration {
   id: number;
 }
 
