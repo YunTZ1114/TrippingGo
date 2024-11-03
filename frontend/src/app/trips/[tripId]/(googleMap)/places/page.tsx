@@ -1,14 +1,16 @@
 "use client";
 import { useJsApiLoader } from "@react-google-maps/api";
 import { useEffect, useRef, useState } from "react";
-import { PlaceSearchBar } from "./components/PlaceSearchBar";
-import { MapDisplay } from "./components/MapDisplay";
-import { PageBlock } from "../components";
-import { PlaceInfoCard } from "./components/PlaceInfoCard";
+import { PageBlock } from "../../components";
+import {
+  PlaceSearchBar,
+  MapDisplay,
+  PlaceInfoCard,
+  GooglePlaceInfoCard,
+} from "../components";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "@/api";
-import { PlaceInfo } from "./interface";
-import { GooglePlaceInfoCard } from "./components/PlaceInfoCard/GooglePlaceInfoCard";
+import { PlaceInfo } from "../interface";
 import { Place } from "@/api/trips";
 
 const libraries: "places"[] = ["places"];
@@ -129,16 +131,19 @@ const PlacePage = ({ params }: { params: { tripId: string } }) => {
         </div>
       </PageBlock>
 
-      {isLoaded && (
-        <MapDisplay
-          focusPlaceId={focusPlaceId}
-          location={selectedLocation || location}
-          center={center}
-          placeInfo={placeInfo}
-          places={places}
-          onMarkerClick={(place) => handleCardOpenChange(true, place)}
-        />
-      )}
+      <div className="h-full w-full border-l-8 border-white">
+        {isLoaded && (
+          <MapDisplay
+            key="place"
+            focusPlaceId={focusPlaceId}
+            location={selectedLocation || location}
+            center={selectedLocation ?? location ?? center}
+            placeInfo={placeInfo}
+            places={places}
+            onMarkerClick={(place) => handleCardOpenChange(true, place)}
+          />
+        )}
+      </div>
     </div>
   );
 };

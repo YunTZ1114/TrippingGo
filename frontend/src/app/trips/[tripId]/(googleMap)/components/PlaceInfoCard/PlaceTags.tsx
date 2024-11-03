@@ -2,7 +2,6 @@ import { MaterialSymbol } from "@/components/MaterialSymbol";
 import { Tag } from "@/components/Tag";
 import { Divider, Dropdown, InputNumber } from "antd";
 import { Fragment, useEffect, useRef, useState } from "react";
-import "./../../styles.css";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/api";
 import {

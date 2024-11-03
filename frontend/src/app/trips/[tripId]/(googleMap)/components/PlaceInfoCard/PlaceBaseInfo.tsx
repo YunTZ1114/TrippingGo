@@ -26,7 +26,7 @@ export const PlaceBaseInfo = ({ place }: { place: Place }) => {
 
       <div className="text-[12px] text-gray-400">{place.address}</div>
       <div className="mt-2 flex items-center gap-2">
-        {place.rating && <FavoriteRate iconSize={20} rating={place.rating} />}
+        <FavoriteRate iconSize={20} rating={place.rating} />
         <PlaceTags
           tripId={place.tripId}
           placeId={place.id}

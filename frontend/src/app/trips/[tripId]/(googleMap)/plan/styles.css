@@ -1,0 +1,5 @@
+.timeline-grid {
+  @apply absolute inset-x-0 bottom-0 top-10 z-10 grid gap-y-5;
+  grid-template-columns: repeat(144, 17px);
+  grid-template-rows: repeat(5, 36px);
+}
