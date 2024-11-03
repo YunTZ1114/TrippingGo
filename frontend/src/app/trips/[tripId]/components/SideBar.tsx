@@ -31,7 +31,7 @@ const items = [
       },
       {
         icon: <MaterialSymbol fill icon="map" />,
-        key: "map",
+        key: "plan",
         label: "規劃行程",
       },
     ],
