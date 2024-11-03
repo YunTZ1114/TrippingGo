@@ -126,8 +126,8 @@ model CheckList {
 model Place {
   id            Int            @id @default(autoincrement())
   tripId        Int            @map("trip_id")
-  googleMapUrl  String?        @map("google_map_url") @db.VarChar(500)
-  googlePlaceId String?        @map("google_place_id") @db.VarChar(50)
+  googleMapUrl  String?        @map("google_map_url") @db.VarChar(1000)
+  googlePlaceId String?        @map("google_place_id") @db.VarChar(1000)
   address       String?        @db.VarChar(250)
   locationLat   Decimal        @map("location_lat") @db.Decimal(10, 7)
   locationLng   Decimal        @map("location_lng") @db.Decimal(11, 7)
