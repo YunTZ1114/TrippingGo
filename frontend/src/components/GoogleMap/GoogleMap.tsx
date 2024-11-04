@@ -18,7 +18,7 @@ export const GoogleMap = ({
   return (
     <BaseGoogleMap
       center={location || center}
-      zoom={14}
+      zoom={15}
       mapContainerStyle={{ width: "100%", height: "100%" }}
       // prettier-ignore
       options={{
