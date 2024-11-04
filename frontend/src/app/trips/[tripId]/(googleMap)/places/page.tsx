@@ -12,6 +12,7 @@ import { useQuery } from "@tanstack/react-query";
 import { api } from "@/api";
 import { PlaceInfo } from "../interface";
 import { Place } from "@/api/trips";
+import "./styles.css";
 
 const libraries: "places"[] = ["places"];
 const center = { lat: 25.038, lng: 121.5645 };
