@@ -5,9 +5,12 @@ import { Fragment, useEffect, useRef, useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/api";
 import {
+  attractionIcons,
   foodIcons,
   MarkerIconType,
   otherIcons,
+  sportIcons,
+  storeIcons,
   trafficIcons,
 } from "@/api/trips";
 import { classNames } from "@/utils";
@@ -87,38 +90,47 @@ const MarkerIconList = ({
   onChange: (value: MarkerIconType) => void;
 }) => {
   return (
-    <div className="flex w-[310px] flex-col rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
+    <div className="flex max-h-[600px] w-[310px] flex-col rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
       <div className="mb-4 w-full">選擇地點圖示</div>
-      {[foodIcons, trafficIcons, otherIcons].map((icons, i) => (
-        <Fragment key={i}>
-          {!!i && <Divider />}
-          <div className="flex w-full flex-wrap gap-2">
-            {icons.map((iconName) => (
-              <div
-                onClick={() => onChange(iconName)}
-                key={iconName}
-                className={classNames(
-                  "group flex h-8 w-8 items-center justify-center gap-2 rounded-full transition-all duration-200 hover:shadow-md",
-                  iconName === value
-                    ? "bg-primary"
-                    : "cursor-pointer bg-gray-50 hover:bg-gray-400",
-                )}
-              >
-                <MaterialSymbol
-                  icon={iconName}
-                  size={16}
+      <div className="overflow-auto">
+        {[
+          foodIcons,
+          sportIcons,
+          attractionIcons,
+          trafficIcons,
+          storeIcons,
+          otherIcons,
+        ].map((icons, i) => (
+          <Fragment key={i}>
+            {!!i && <Divider />}
+            <div className="flex w-full flex-wrap gap-2">
+              {icons.map((iconName) => (
+                <div
+                  onClick={() => onChange(iconName)}
+                  key={iconName}
                   className={classNames(
-                    "transition-all duration-200",
+                    "group flex h-8 w-8 items-center justify-center gap-2 rounded-full transition-all duration-200 hover:shadow-md",
                     iconName === value
-                      ? "text-white"
-                      : "text-gray-600 group-hover:text-white",
+                      ? "bg-primary"
+                      : "cursor-pointer bg-gray-50 hover:bg-gray-400",
                   )}
-                />
-              </div>
-            ))}
-          </div>
-        </Fragment>
-      ))}
+                >
+                  <MaterialSymbol
+                    icon={iconName}
+                    size={16}
+                    className={classNames(
+                      "transition-all duration-200",
+                      iconName === value
+                        ? "text-white"
+                        : "text-gray-600 group-hover:text-white",
+                    )}
+                  />
+                </div>
+              ))}
+            </div>
+          </Fragment>
+        ))}
+      </div>
     </div>
   );
 };
