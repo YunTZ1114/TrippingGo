@@ -128,6 +128,21 @@ export class TripService {
     return updatedTrip.id;
   }
 
+  async setTripIsPublic({ id, isPublic }: { id: number; isPublic: boolean }) {
+    const trip = await this.databaseService.trip.findUnique({ where: { id } });
+
+    if (!trip) throw new HttpException('The trip does not exist.', HttpStatus.NOT_FOUND);
+
+    const updatedTrip = await this.databaseService.trip.update({
+      where: { id, isDeleted: false },
+      data: {
+        isPubilc: isPublic,
+      },
+    });
+
+    return updatedTrip.id;
+  }
+
   async deleteTrip(id: number) {
     const trip = await this.databaseService.trip.findUnique({ where: { id } });
 
