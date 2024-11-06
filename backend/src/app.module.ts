@@ -12,6 +12,7 @@ import { PlaceModule } from './places/place.module';
 import { PlaceCommentModule } from './placeComments/placeComment.module';
 import { PlaceDurationModule } from './placeDuration/placeDuration.module';
 import { RouteModule } from './routes/routes.module';
+import { UploadModule } from './upload/upload.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { RouteModule } from './routes/routes.module';
     PlaceCommentModule,
     PlaceDurationModule,
     RouteModule,
+    UploadModule,
   ],
   controllers: [],
   providers: [],

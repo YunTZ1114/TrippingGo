@@ -19,11 +19,14 @@ export const LINK_ENCRYPTION_KEY = process.env.LINK_ENCRYPTION_KEY;
 
 export const CLOUDMERSIVE_API_KEY = process.env.CLOUDMERSIVE_API_KEY;
 
-export const GOOGLE_OAUTH_ID = process.env.NEXT_PUBLIC_GOOGLE_OAUTH_ID
+export const GOOGLE_OAUTH_ID = process.env.NEXT_PUBLIC_GOOGLE_OAUTH_ID;
 
-export const GOOGLE_OAUTH_SECRET = process.env.GOOGLE_OAUTH_SECRET
+export const GOOGLE_OAUTH_SECRET = process.env.GOOGLE_OAUTH_SECRET;
 
-export const GOOGLE_MAP_API_KEY = process.env.GOOGLE_MAP_API_KEY
+export const GOOGLE_MAP_API_KEY = process.env.GOOGLE_MAP_API_KEY;
 
+export const AWS_REGION = process.env.AWS_REGION;
 
+export const AWS_ACCESS_KEY_ID = process.env.AWS_ACCESS_KEY_ID;
 
+export const AWS_SECRET_ACCESS_KEY = process.env.AWS_SECRET_ACCESS_KEY;
