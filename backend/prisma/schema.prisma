@@ -77,6 +77,7 @@ model Trip {
   currencyCode String       @map("currency_code") @db.VarChar(3)
   startTime    DateTime     @map("start_time") @db.Timestamp(0)
   endTime      DateTime     @map("end_time") @db.Timestamp(0)
+  isPubilc     Boolean      @default(false) @map("is_public")
   isDeleted    Boolean      @default(false) @map("is_deleted")
   createdAt    DateTime     @default(now()) @map("created_at") @db.Timestamp(0)
   updatedAt    DateTime     @default(now()) @updatedAt @map("updated_at") @db.Timestamp(0)

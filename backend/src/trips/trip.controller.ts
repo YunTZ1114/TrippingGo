@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Query, Request, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Put, Query, Request, UseGuards } from '@nestjs/common';
 import { TripDto, TripQueryDto, UpdateTripDto } from './trip.dto';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { DatabaseService } from 'src/database/database.service';
@@ -66,6 +66,16 @@ export class TripController {
   @RequiredPermission(PermissionsText.CREATOR)
   async updateTrip(@Param('tripId') tripId: number, @Body() updateTripDto: UpdateTripDto) {
     const updatedTripId = await this.tripService.updateTrip({ ...updateTripDto, id: tripId });
+    return {
+      message: 'Update trip successfully',
+      data: updatedTripId,
+    };
+  }
+
+  @Patch('/:tripId')
+  @RequiredPermission(PermissionsText.CREATOR)
+  async setTripIsPublic(@Param('tripId') tripId: number, @Body('isPublic') isPublic: boolean) {
+    const updatedTripId = await this.tripService.setTripIsPublic({ id: tripId, isPublic });
     return {
       message: 'Update trip successfully',
       data: updatedTripId,
