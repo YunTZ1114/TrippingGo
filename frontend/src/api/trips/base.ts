@@ -37,6 +37,18 @@ export const put = async ({
   return res.data.data;
 };
 
+export const patch = async ({
+  pathParams,
+  data,
+}: APIRequestConfig<never, { isPublic: boolean }, { tripId: number }>) => {
+  const url = `/trips/${pathParams?.tripId}`;
+  const res = await baseInstance.patch<APIResponseData<{ tripId: number }>>(
+    url,
+    data,
+  );
+  return res.data.data;
+};
+
 export const getTripDetail = async ({
   pathParams,
 }: APIRequestConfig<never, never, { tripId: number }>) => {
