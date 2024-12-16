@@ -29,7 +29,7 @@ export class ReservationService {
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     return reservations.map(({ isDeleted, createdAt, place, ...other }) => {
-      return { placeName: place.name, ...other };
+      return { placeName: place?.name, ...other };
     });
   }
 
@@ -55,7 +55,7 @@ export class ReservationService {
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     return reservations.map(({ isDeleted, createdAt, place, ...other }) => {
-      return { placeName: place.name, ...other };
+      return { placeName: place?.name, ...other };
     });
   }
 
