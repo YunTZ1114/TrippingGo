@@ -36,6 +36,9 @@ model User {
   mails       Mail[]
   tripMembers TripMember[]
   trips       Trip[]
+  expenses    Expense[]
+  expenseShare    ExpenseShare[]
+  
   country     Country      @relation(fields: [countryId], references: [id])
 
   @@map("users")
@@ -77,13 +80,14 @@ model Trip {
   currencyCode String       @map("currency_code") @db.VarChar(3)
   startTime    DateTime     @map("start_time") @db.Timestamp(0)
   endTime      DateTime     @map("end_time") @db.Timestamp(0)
-  isPubilc     Boolean      @default(false) @map("is_public")
+  isPublic     Boolean      @default(false) @map("is_public")
   isDeleted    Boolean      @default(false) @map("is_deleted")
   createdAt    DateTime     @default(now()) @map("created_at") @db.Timestamp(0)
   updatedAt    DateTime     @default(now()) @updatedAt @map("updated_at") @db.Timestamp(0)
   
   places       Place[]
   tripMembers  TripMember[]
+  expenses     Expense[]
   creator      User         @relation(fields: [creatorId], references: [id])
 
   @@map("trips")
@@ -147,6 +151,7 @@ model Place {
   trip          Trip           @relation(fields: [tripId], references: [id])
   reservations  Reservation[]
   placeDurations PlaceDuration[]
+  expenses    Expense[]
 
   @@map("places")
 }
@@ -222,4 +227,55 @@ model Route {
   destination     PlaceDuration   @relation("RouteEnd", fields: [destinationId], references: [id])
 
   @@map("routes")
+}
+
+model ExpenseCategory {
+  id          Int         @id @default(autoincrement())
+  name        String      @db.VarChar(50)
+  description String?
+  createdAt   DateTime    @default(now()) @map("created_at") @db.Timestamp(0)
+  updatedAt   DateTime    @default(now()) @updatedAt @map("updated_at") @db.Timestamp(0)
+  expenses    Expense[]
+
+  @@map("expense_categories")
+}
+
+model Expense {
+  id              Int           @id @default(autoincrement())
+  tripId          Int           @map("trip_id")
+  payerId         Int           @map("payer_id")
+  categoryId      Int           @map("category_id")
+  time            DateTime      @default(now()) @db.Timestamp(0)
+  placeId         Int?          @map("place_id")
+  name            String?       @db.VarChar(255)
+  amount          Decimal       @db.Decimal(10, 2)
+  description     String?
+  imageUrl        Json[]        @default([]) @map("image_url")
+  isDeleted       Boolean       @default(false) @map("is_deleted")
+  createdAt       DateTime      @default(now()) @map("created_at") @db.Timestamp(0)
+  updatedAt       DateTime      @default(now()) @updatedAt @map("updated_at") @db.Timestamp(0)
+
+  trip            Trip         @relation(fields: [tripId], references: [id])
+  payer           User         @relation(fields: [payerId], references: [id])
+  category        ExpenseCategory @relation(fields: [categoryId], references: [id])
+  place           Place?       @relation(fields: [placeId], references: [id])
+  expenseShare    ExpenseShare[]
+
+  @@map("expenses")
+}
+
+model ExpenseShare {
+  id              Int       @id @default(autoincrement())
+  expenseId       Int       @map("expense_id")
+  userId          Int       @map("user_id")
+  sharePercentage Decimal   @db.Decimal(5, 2) @map("share_percentage")
+  amount          Decimal   @db.Decimal(10, 2)
+  isDeleted       Boolean   @default(false) @map("is_deleted")
+  createdAt       DateTime  @default(now()) @map("created_at") @db.Timestamp(0)
+  updatedAt       DateTime  @default(now()) @updatedAt @map("updated_at") @db.Timestamp(0)
+
+  expense         Expense   @relation(fields: [expenseId], references: [id])
+  user            User      @relation(fields: [userId], references: [id])
+
+  @@map("expense_shares")
 }
