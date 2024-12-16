@@ -136,7 +136,7 @@ export class TripService {
     const updatedTrip = await this.databaseService.trip.update({
       where: { id, isDeleted: false },
       data: {
-        isPubilc: isPublic,
+        isPublic: isPublic,
       },
     });
 
