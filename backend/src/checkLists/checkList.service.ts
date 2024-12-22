@@ -33,7 +33,7 @@ export class CheckListService {
 
     const formattedCheckLists = checkLists.map(({ description, ...others }) => {
       const formattedDescription = Object.entries(description).map(([key, value]) => {
-        return { text: key, checked: value.includes(tripMemberId) };
+        return { text: key, checked: (value as number[])?.includes(tripMemberId) };
       });
       return { ...others, description: formattedDescription };
     });
@@ -48,12 +48,12 @@ export class CheckListService {
 
     if (!tripMember) throw new HttpException('The trip member is not found.', HttpStatus.NOT_FOUND);
 
-    const descriptionObject = description.reduce(
+    const descriptionObject = (description as string[]).reduce(
       (acc, key) => {
         acc[key] = [];
         return acc;
       },
-      {} as Record<string, any[]>,
+      {} as Record<string, number[]>,
     );
 
     const checkList = await this.databaseService.checkList.create({
