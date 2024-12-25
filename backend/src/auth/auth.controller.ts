@@ -17,6 +17,22 @@ export class AuthController {
     private readonly encryptionService: EncryptionService,
   ) {}
 
+  @Post('google-info')
+  async getGoogleInfo(@Body('credential') credential: string) {
+    const client = new OAuth2Client(GOOGLE_OAUTH_ID);
+    const ticket = await client.verifyIdToken({
+      idToken: credential,
+      audience: process.env.GOOGLE_OAUTH_ID,
+    });
+
+    const payload = ticket.getPayload();
+    if (!payload) throw new HttpException({ message: 'Invalid Google token.' }, HttpStatus.BAD_REQUEST);
+
+    const { email, picture } = payload;
+
+    return { data: { email, avatar: picture } };
+  }
+
   @Post('login')
   async login(@Body() loginDto: LoginDto) {
     const { email, password, stayLoggedIn } = loginDto;
@@ -62,11 +78,11 @@ export class AuthController {
 
   @Post('sign-up')
   async signUp(@Body() signUpDto: SignUpDto) {
-    const { email, password, name, countryId, gender } = signUpDto;
+    const { email } = signUpDto;
     const existingUser = await this.authService.getUserByEmail(email);
     if (existingUser) throw new HttpException({ message: 'Email is already registered.' }, HttpStatus.CONFLICT);
 
-    const newUser = await this.authService.signUp(email, password, name, countryId, gender);
+    const newUser = await this.authService.signUp(signUpDto);
 
     const code = await this.authService.generateVerificationCode(email, 24);
     if (!code) throw new HttpException({ message: 'Failed to generate verification code.' }, HttpStatus.INTERNAL_SERVER_ERROR);
