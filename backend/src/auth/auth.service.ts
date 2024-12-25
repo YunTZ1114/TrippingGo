@@ -3,6 +3,7 @@ import * as bcrypt from 'bcrypt';
 import { DatabaseService } from 'src/database/database.service';
 import { PEPPER } from 'src/config';
 import { EncryptionService } from 'src/utils/encrypt';
+import { User } from 'src/types/user.type';
 
 @Injectable()
 export class AuthService {
@@ -36,7 +37,7 @@ export class AuthService {
     return user;
   }
 
-  async signUp(email: string, password: string, name: string, countryId: number, gender: string) {
+  async signUp({ email, password, name, countryId, gender, avatar, isVerified = false }: User) {
     const existingUser = await this.databaseService.user.findUnique({ where: { email } });
     if (existingUser) {
       throw new BadRequestException('Email already in use');
@@ -51,6 +52,8 @@ export class AuthService {
         name,
         countryId,
         gender,
+        avatar,
+        isVerified,
       },
     });
 
