@@ -8,7 +8,7 @@ export enum CheckListType {
 export interface BaseCheckList {
   id: number;
   tripMemberId: number;
-  description: Record<string, any>;
+  description?: Record<string, number[]> | string[];
   title: string;
   type: CheckListType;
   isPublic: boolean;

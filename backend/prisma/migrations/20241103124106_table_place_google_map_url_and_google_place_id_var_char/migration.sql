@@ -1,3 +1,0 @@
--- AlterTable
-ALTER TABLE "places" ALTER COLUMN "google_map_url" SET DATA TYPE VARCHAR(1000),
-ALTER COLUMN "google_place_id" SET DATA TYPE VARCHAR(1000);

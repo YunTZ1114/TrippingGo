@@ -4,7 +4,7 @@ import { CheckListType } from 'src/types/checkList.type';
 export class CheckListDescriptionDto {
   @IsOptional()
   @IsObject({ message: 'Description must be an object' })
-  description?: Record<string, any>;
+  description?: Record<string, number[]>;
 }
 
 export class CheckListDto {

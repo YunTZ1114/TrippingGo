@@ -22,8 +22,8 @@ export class PlaceService {
     });
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    return places.map(({ isDeleted, createdAt, ...other }) => {
-      return { ...other };
+    return places.map(({ isDeleted, createdAt, ...others }) => {
+      return { ...others };
     });
   }
 
