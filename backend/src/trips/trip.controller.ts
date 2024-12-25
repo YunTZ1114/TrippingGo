@@ -45,11 +45,11 @@ export class TripController {
   @Post('')
   async createTrip(@Request() req, @Body() tripDto: TripDto) {
     const { userId } = req;
-    const { name, description, currencyCode, startTime, endTime, memberIds } = tripDto;
+    const { memberIds, ...others } = tripDto;
     let tripMemberIds = [];
 
     const result = await this.databaseService.executeTransaction(async () => {
-      const tripId = await this.tripService.createTrip({ creatorId: userId, name, description, currencyCode, startTime, endTime });
+      const tripId = await this.tripService.createTrip({ creatorId: userId, ...others });
 
       if (memberIds?.length) tripMemberIds = await this.tripMemberService.createTripMembers(tripId, memberIds);
 

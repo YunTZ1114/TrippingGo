@@ -6,7 +6,7 @@ export interface BaseTrip {
   name: string;
   description: string;
   creatorId: number;
-  currencyCode: string;
+  currencyId: number;
   startTime: Date;
   endTime: Date;
   coverUrl?: string;

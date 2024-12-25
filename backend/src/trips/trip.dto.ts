@@ -1,4 +1,4 @@
-import { IsArray, IsDateString, IsEnum, IsInt, IsNotEmpty, IsOptional, IsString, MaxLength, MinLength } from 'class-validator';
+import { IsArray, IsDateString, IsEnum, IsInt, IsNotEmpty, IsNumber, IsOptional, IsString, MinLength } from 'class-validator';
 import { TripFilterType } from 'src/types/trip.type';
 
 export class TripDto {
@@ -9,9 +9,8 @@ export class TripDto {
   @IsNotEmpty()
   description: string;
 
-  @IsNotEmpty()
-  @MaxLength(3)
-  currencyCode: string;
+  @IsNumber()
+  currencyId: number;
 
   @IsNotEmpty()
   @IsDateString()
@@ -43,9 +42,8 @@ export class UpdateTripDto {
   @IsNotEmpty()
   description: string;
 
-  @IsNotEmpty()
-  @MaxLength(3)
-  currencyCode: string;
+  @IsNumber()
+  currencyId: number;
 
   @IsNotEmpty()
   @IsDateString()

@@ -7,12 +7,12 @@ import { PermissionsText } from 'src/types/tripMember.type';
 export class TripService {
   constructor(private readonly databaseService: DatabaseService) {}
 
-  async createTrip({ creatorId, name, description, currencyCode, startTime, endTime }: Omit<BaseTrip, 'id' | 'coverUrl'>) {
+  async createTrip({ creatorId, name, description, currencyId, startTime, endTime }: Omit<BaseTrip, 'id' | 'coverUrl'>) {
     const user = await this.databaseService.user.findUnique({ where: { id: creatorId } });
     if (!user) throw new HttpException('User not found.', HttpStatus.NOT_FOUND);
 
     const trip = await this.databaseService.trip.create({
-      data: { creatorId, name, description, currencyCode, startTime: new Date(startTime), endTime: new Date(endTime) },
+      data: { creatorId, name, description, currencyId, startTime: new Date(startTime), endTime: new Date(endTime) },
     });
 
     await this.databaseService.tripMember.create({
@@ -20,7 +20,7 @@ export class TripService {
         userId: user.id,
         nickname: user.name,
         tripId: trip.id,
-        permissions: 3,
+        permissions: 4,
       },
     });
 
@@ -39,7 +39,7 @@ export class TripService {
         description: true,
         coverUrl: true,
         creatorId: true,
-        currencyCode: true,
+        currencyId: true,
         startTime: true,
         endTime: true,
       },
@@ -71,7 +71,7 @@ export class TripService {
         description: true,
         coverUrl: true,
         creatorId: true,
-        currencyCode: true,
+        currencyId: true,
         startTime: true,
         endTime: true,
         updatedAt: true,
@@ -108,7 +108,7 @@ export class TripService {
     return result;
   }
 
-  async updateTrip({ id, name, description, currencyCode, startTime, endTime, coverUrl }: Omit<BaseTrip, 'creatorId'>) {
+  async updateTrip({ id, name, description, currencyId, startTime, endTime, coverUrl }: Omit<BaseTrip, 'creatorId'>) {
     const trip = await this.databaseService.trip.findUnique({ where: { id } });
 
     if (!trip) throw new HttpException('The trip does not exist.', HttpStatus.NOT_FOUND);
@@ -118,7 +118,7 @@ export class TripService {
       data: {
         name,
         description,
-        currencyCode,
+        currencyId,
         startTime: new Date(startTime),
         endTime: new Date(endTime),
         coverUrl: coverUrl ?? trip.coverUrl,
