@@ -15,6 +15,7 @@ import { RouteModule } from './routes/routes.module';
 import { UploadModule } from './upload/upload.module';
 import { ExpenseCategoryModule } from './expenseCategories/expenseCategory.module';
 import { ExpenseModule } from './expenses/expense.module';
+import { WebSocketModule } from './webSocket/websocket.module';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { ExpenseModule } from './expenses/expense.module';
     UploadModule,
     ExpenseCategoryModule,
     ExpenseModule,
+    WebSocketModule,
   ],
   controllers: [],
   providers: [],

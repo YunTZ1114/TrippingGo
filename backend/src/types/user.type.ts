@@ -1,5 +1,10 @@
 // import { CommonFields } from './common.type';
 
+export enum GenderType {
+  MALE = 'MALE',
+  FEMALE = 'FEMALE',
+}
+
 export type UserPreview = {
   id: number;
   avatar: string | null;
@@ -11,7 +16,7 @@ export type User = {
   password: string;
   name: string;
   countryId: number;
-  gender: string;
+  gender: GenderType;
   avatar: string | null;
   isVerified: boolean;
 };

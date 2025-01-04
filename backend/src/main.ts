@@ -6,11 +6,14 @@ import { HttpExceptionFilter } from './utils/http-exception';
 
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
+import { WebSocketService } from './webSocket/webSocket.service';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     logger: ['error', 'warn', 'log', 'debug', 'verbose'],
   });
+
+  const webSocketService = app.get(WebSocketService);
 
   app.useGlobalPipes(
     new ValidationPipe({
@@ -32,4 +35,8 @@ async function bootstrap() {
   await app.listen(process.env.PORT || 3000);
   console.log('Server is running in http://localhost:' + process.env.PORT);
 }
-bootstrap();
+
+bootstrap().catch((error) => {
+  Logger.error('Bootstrap error:', error);
+  process.exit(1);
+});

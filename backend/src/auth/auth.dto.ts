@@ -1,4 +1,5 @@
 import { IsEmail, IsNotEmpty, IsOptional, MinLength } from 'class-validator';
+import { GenderType } from 'src/types/user.type';
 
 export class SignUpDto {
   @IsEmail()
@@ -15,7 +16,7 @@ export class SignUpDto {
   countryId: number;
 
   @IsNotEmpty()
-  gender: string;
+  gender: GenderType;
 
   @IsOptional()
   avatar: string;

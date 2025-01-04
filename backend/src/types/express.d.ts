@@ -2,7 +2,7 @@ import { Request } from 'express';
 
 declare global {
   namespace Express {
-    interface Request {
+    export interface Request {
       userId?: number;
       email?: string;
       userPermission?: number;

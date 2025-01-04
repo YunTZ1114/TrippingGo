@@ -13,6 +13,8 @@ export const TEST_MAIL = process.env.TEST_MAIL;
 
 export const FE_URL = process.env.FE_URL;
 
+export const SOCKET_URL = process.env.SOCKET_URL;
+
 export const JWT_SECRET = process.env.JWT_SECRET;
 
 export const LINK_ENCRYPTION_KEY = process.env.LINK_ENCRYPTION_KEY;
