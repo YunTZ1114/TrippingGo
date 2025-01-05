@@ -19,6 +19,7 @@ interface ConnectedClient {
   roomId?: string;
   token: string;
   type: ClientType;
+  tripMemberId?: string;
 }
 
 export abstract class BaseGateway
@@ -31,6 +32,7 @@ export abstract class BaseGateway
     client: Socket,
     token: string,
     roomId: string,
+    tripMemberId?: string,
   ): Promise<void>;
 
   protected readonly logger: Logger;
@@ -50,6 +52,7 @@ export abstract class BaseGateway
     const roomId = client.handshake.query?.roomId as string;
     const token = client.handshake.headers?.authorization;
     const clientType = client.handshake.query.type as ClientType;
+    const tripMemberId = client.handshake.query?.tripMemberId as string;
 
     this.logger.log(
       `Connection attempt to ${this.namespace} ${roomId} - Type: ${clientType}, ID: ${clientId}`,
@@ -69,7 +72,13 @@ export abstract class BaseGateway
         return;
       }
 
-      await this.handleClientUserConnection(client, clientId, roomId, token);
+      await this.handleClientUserConnection(
+        client,
+        clientId,
+        roomId,
+        token,
+        tripMemberId,
+      );
     } catch (error) {
       this.handleConnectionError(client, error);
     }
@@ -100,6 +109,7 @@ export abstract class BaseGateway
     clientId: string,
     roomId: string,
     token: string,
+    tripMemberId?: string,
   ) {
     if (!roomId) {
       throw new Error(`Missing roomId for client user in ${this.namespace}`);
@@ -110,11 +120,13 @@ export abstract class BaseGateway
       type: ClientType.ClientUser,
       roomId,
       token,
+      tripMemberId,
     });
 
     this.logger.log(
       `Client user ${clientId} joined ${this.namespace} room ${roomId}`,
     );
+
     await this.onClientJoinRoom(client, token, roomId);
   }
 
@@ -162,6 +174,53 @@ export abstract class BaseGateway
     }
   }
 
+  @SubscribeMessage('emitToMembers')
+  handleEmitToMembers(
+    client: Socket,
+    payload: {
+      roomId: number;
+      event: string;
+      data: Array<{
+        tripMemberId: number;
+        data: any;
+      }>;
+    },
+  ) {
+    try {
+      if (client.id !== this.apiServerSocketId) {
+        this.logger.warn(
+          `Unauthorized emitToMembers attempt from client ${client.id} in ${this.namespace}`,
+        );
+        return;
+      }
+
+      const { roomId, event, data } = payload;
+      const sockets = Array.from(this.connectedClients.entries());
+
+      sockets.forEach(([socketId, clientInfo]) => {
+        if (
+          clientInfo.roomId === roomId.toString() &&
+          clientInfo.tripMemberId
+        ) {
+          const memberData = data.find(
+            (item) => item.tripMemberId.toString() === clientInfo.tripMemberId,
+          );
+
+          if (memberData) {
+            this.server.to(socketId).emit(event, { data: memberData?.data });
+            this.logger.log(
+              `Emitted personalized ${event} to member ${clientInfo.tripMemberId} in room ${roomId}`,
+            );
+          }
+        }
+      });
+    } catch (error) {
+      this.logger.error(
+        `Error handling emitToMembers in ${this.namespace}: ${error.message}`,
+      );
+    }
+  }
+
   protected async makeApiRequest(
     token: string,
     endpoint: string,
@@ -175,6 +234,7 @@ export abstract class BaseGateway
           },
         }),
       );
+
       return response.data;
     } catch (error) {
       this.logger.error('API request failed:', error.message);

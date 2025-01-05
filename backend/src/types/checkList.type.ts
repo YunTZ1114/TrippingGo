@@ -5,6 +5,23 @@ export enum CheckListType {
   SHOPPING = 'SHOPPING',
 }
 
+export interface CheckListDescription {
+  [key: string]: number[];
+}
+
+export interface CheckListItem {
+  text: string;
+  checked: boolean;
+}
+
+export interface FormattedCheckList {
+  tripMemberId: number;
+  data: Array<{
+    description: CheckListItem[];
+    [key: string]: any;
+  }>;
+}
+
 export interface BaseCheckList {
   id: number;
   tripMemberId: number;

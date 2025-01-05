@@ -1,10 +1,17 @@
 import { ForbiddenException, HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { DatabaseService } from 'src/database/database.service';
-import { BaseCheckList } from 'src/types/checkList.type';
+import { BaseCheckList, CheckListDescription, CheckListItem } from 'src/types/checkList.type';
 
 @Injectable()
 export class CheckListService {
   constructor(private readonly databaseService: DatabaseService) {}
+
+  private formatCheckListDescription(description: CheckListDescription, tripMemberId: number): CheckListItem[] {
+    return Object.entries(description ?? {}).map(([key, value]) => ({
+      text: key,
+      checked: Array.isArray(value) ? value.includes(tripMemberId) : false,
+    }));
+  }
 
   async getCheckLists(tripMemberId: number) {
     const tripMember = await this.databaseService.tripMember.findUnique({
@@ -32,13 +39,46 @@ export class CheckListService {
     });
 
     const formattedCheckLists = checkLists.map(({ description, ...others }) => {
-      const formattedDescription = Object.entries(description).map(([key, value]) => {
-        return { text: key, checked: (value as number[])?.includes(tripMemberId) };
-      });
+      const formattedDescription = this.formatCheckListDescription(description as CheckListDescription, tripMemberId);
       return { ...others, description: formattedDescription };
     });
 
     return formattedCheckLists;
+  }
+
+  async getCheckListsByTrip(tripId: number) {
+    const tripMembers = await this.databaseService.tripMember.findMany({
+      where: { tripId, isDeleted: false },
+      select: {
+        id: true,
+      },
+    });
+
+    const checkLists = await this.databaseService.checkList.findMany({
+      where: {
+        tripMember: {
+          tripId,
+        },
+        isDeleted: false,
+      },
+      orderBy: {
+        id: 'desc',
+      },
+    });
+
+    const result = tripMembers.reduce((acc, { id }) => {
+      const formattedCheckLists = checkLists
+        .filter(({ tripMemberId, isPublic }) => isPublic || id === tripMemberId)
+        .map(({ description, ...others }) => {
+          const formattedDescription = this.formatCheckListDescription(description as CheckListDescription, id);
+          return { ...others, description: formattedDescription };
+        });
+
+      acc.push({ tripMemberId: id, data: formattedCheckLists });
+      return acc;
+    }, []);
+
+    return result;
   }
 
   async createCheckList({ tripMemberId, title, type, description, isPublic }: Omit<BaseCheckList, 'id'>) {

@@ -8,7 +8,7 @@ import { Socket } from 'socket.io';
 @WebSocketGateway({ namespace: '/trips/trip-members' })
 export class TripMemberGateway extends BaseGateway {
   constructor(httpService: HttpService) {
-    super(httpService, 'TripMember');
+    super(httpService, 'tripMembers');
   }
 
   protected async onClientJoinRoom(

@@ -1,6 +1,6 @@
 export enum NamespaceType {
   TripMembers = '/trips/trip-members',
-  // Checklist = '/trips/checklist',
+  Checklists = '/trips/check-lists',
   // Reservations = '/trips/reservations',
   Places = '/trips/places',
   // PlaceDurations = '/trips/place-durations',

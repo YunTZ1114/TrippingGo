@@ -100,6 +100,29 @@ export class WebSocketService implements OnModuleInit, OnApplicationShutdown {
     }
   }
 
+  async emitToMembers(
+    tripId: number,
+    event: string,
+    data: Array<{
+      tripMemberId: number;
+      data: any;
+    }>,
+    namespace: NamespaceType = NamespaceType.Checklists,
+  ) {
+    const socket = this.sockets.get(namespace);
+    if (!socket?.connected) {
+      throw new Error(`Socket for namespace ${namespace} is not connected`);
+    }
+
+    try {
+      socket.emit('emitToMembers', { roomId: tripId, event, data });
+      this.logger.log(`Emitted ${event} to room ${tripId} in namespace ${namespace}`);
+    } catch (error) {
+      this.logger.error(`Error emitting to room: ${error.message}`);
+      throw error;
+    }
+  }
+
   async disconnectClient(tripId: number, clientId: string, namespace: NamespaceType = NamespaceType.TripMembers) {
     const socket = this.sockets.get(namespace);
     if (!socket?.connected) {
