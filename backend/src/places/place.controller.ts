@@ -8,6 +8,8 @@ import { PlaceAttributesDto } from './place.dto';
 import { PermissionsText } from 'src/types/tripMember.type';
 import { PlaceCommentService } from 'src/placeComments/placeComment.service';
 import { DatabaseService } from 'src/database/database.service';
+import { NamespaceType } from 'src/types/webSocket.type';
+import { WebSocketService } from 'src/webSocket/webSocket.service';
 
 @Controller('trips/:tripId/places')
 @UseGuards(AuthGuard, TripGuard)
@@ -16,7 +18,24 @@ export class PlaceController {
     private readonly databaseService: DatabaseService,
     private readonly placeService: PlaceService,
     private readonly placeCommentService: PlaceCommentService,
+    private readonly webSocketService: WebSocketService,
   ) {}
+
+  private async broadcastPlaces(tripId: number) {
+    try {
+      const places = await this.placeService.getPlaces(tripId);
+      await this.webSocketService.emitToRoom(
+        tripId,
+        'places',
+        {
+          data: places,
+        },
+        NamespaceType.Places,
+      );
+    } catch (error) {
+      console.error(`Failed to broadcast trip members for trip ${tripId}: ${error.message}`);
+    }
+  }
 
   @Get('')
   @RequiredPermission(PermissionsText.VIEWER)
@@ -35,24 +54,30 @@ export class PlaceController {
       return placeId;
     });
 
+    await this.broadcastPlaces(tripId);
+
     return { data: { placeId } };
   }
 
   @Put('/:placeId')
   @RequiredPermission(PermissionsText.EDITOR)
-  async updatePlace(@Param('placeId') placeId: number, @Body() placeAttributesDto: PlaceAttributesDto) {
+  async updatePlace(@Param('tripId') tripId: number, @Param('placeId') placeId: number, @Body() placeAttributesDto: PlaceAttributesDto) {
     await this.placeService.updatePlace({ placeId, ...placeAttributesDto });
+
+    await this.broadcastPlaces(tripId);
 
     return { message: 'Update place in trip successfully' };
   }
 
   @Delete('/:placeId')
   @RequiredPermission(PermissionsText.EDITOR)
-  async deletePlace(@Param('placeId') placeId: number) {
+  async deletePlace(@Param('tripId') tripId: number, @Param('placeId') placeId: number) {
     await this.databaseService.executeTransaction(async () => {
       await this.placeService.deletePlace(placeId);
       await this.placeCommentService.deletePlaceComment(placeId);
     });
+
+    await this.broadcastPlaces(tripId);
 
     return { message: 'Delete reservation in trip successfully' };
   }
