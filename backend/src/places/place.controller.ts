@@ -33,7 +33,7 @@ export class PlaceController {
         NamespaceType.Places,
       );
     } catch (error) {
-      console.error(`Failed to broadcast trip members for trip ${tripId}: ${error.message}`);
+      console.error(`Failed to broadcast places for trip ${tripId}: ${error.message}`);
     }
   }
 
