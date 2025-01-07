@@ -68,7 +68,7 @@ export class PlaceDurationService {
 
   async updatePlaceDuration({ id, date, col, row, groupNumber }: Omit<BasePlaceDuration, 'placeId'> & { id: number }) {
     const placeDuration = await this.databaseService.placeDuration.findUnique({ where: { id, isDeleted: false } });
-    if (!placeDuration.id) {
+    if (!placeDuration?.id) {
       throw new HttpException('Invalid placeDuration ID.', HttpStatus.BAD_REQUEST);
     }
 
@@ -83,6 +83,36 @@ export class PlaceDurationService {
     });
 
     return placeDuration;
+  }
+
+  async updatePlaceDurations(placeDurations: Array<Omit<BasePlaceDuration, 'placeId'> & { id: number }>) {
+    const ids = placeDurations.map((item) => item.id);
+    const existingPlaceDurations = await this.databaseService.placeDuration.findMany({
+      where: {
+        id: { in: ids },
+        isDeleted: false,
+      },
+    });
+
+    if (existingPlaceDurations.length !== ids.length) {
+      throw new HttpException('One or more invalid placeDuration IDs.', HttpStatus.BAD_REQUEST);
+    }
+
+    const updates = await this.databaseService.$transaction(
+      placeDurations.map(({ id, date, col, row, groupNumber }) =>
+        this.databaseService.placeDuration.update({
+          where: { id },
+          data: {
+            date: new Date(date),
+            col,
+            row,
+            groupNumber,
+          },
+        }),
+      ),
+    );
+
+    return updates;
   }
 
   async deletePlaceDuration(id: number) {

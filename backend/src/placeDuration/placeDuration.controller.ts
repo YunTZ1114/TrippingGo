@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, UseGuards } from '@nestjs/common';
 import { RequiredPermission } from 'src/decorators/required-permission.decorator';
 import { PermissionsText } from 'src/types/tripMember.type';
 import { PlaceDurationService } from './placeDuration.service';
@@ -35,15 +35,12 @@ export class PlaceDurationController {
     return { data: { placeDuration } };
   }
 
-  @Patch('/:placeDurationId')
+  @Put('')
   @RequiredPermission(PermissionsText.EDITOR)
-  async updatePlaceDuration(@Param('placeDurationId') placeDurationId: number, @Body() updatePlaceDurationDto: Omit<PlaceDurationDto, 'placeId'>) {
-    await this.placeDurationService.updatePlaceDuration({
-      id: placeDurationId,
-      ...updatePlaceDurationDto,
-    });
+  async updatePlaceDurations(@Body() updatePlaceDurationArray: Array<Omit<PlaceDurationDto, 'placeId'> & { id: number }>) {
+    await this.placeDurationService.updatePlaceDurations(updatePlaceDurationArray);
 
-    return { message: 'Place Duration Updated successfully' };
+    return { message: 'Place Durations Updated successfully' };
   }
 
   @Delete('/:placeDurationId')
