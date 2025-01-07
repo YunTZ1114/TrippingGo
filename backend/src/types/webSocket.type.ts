@@ -3,5 +3,5 @@ export enum NamespaceType {
   Checklists = '/trips/check-lists',
   Places = '/trips/places',
   PlaceDurations = '/trips/place-durations',
-  // Routes = '/trips/routes',
+  Routes = '/trips/routes',
 }

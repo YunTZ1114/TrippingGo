@@ -6,7 +6,7 @@ import { BaseRoute } from 'src/types/route.type';
 export class RouteService {
   constructor(private readonly databaseService: DatabaseService) {}
 
-  async getRoute(tripId: number) {
+  async getRoutes(tripId: number) {
     const trip = await this.databaseService.trip.findUnique({ where: { id: tripId, isDeleted: false } });
     if (!trip) {
       throw new HttpException('Trip ID is required.', HttpStatus.BAD_REQUEST);

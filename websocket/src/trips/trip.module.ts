@@ -4,6 +4,7 @@ import { TripMemberGateway } from './gateways/tripMember.gateway';
 import { PlaceGateway } from './gateways/place.gateway';
 import { CheckListsGateway } from './gateways/checkList.gateway';
 import { PlaceDurationGateway } from './gateways/place-duration.gateway';
+import { RouteGateway } from './gateways/route.gateway';
 
 @Module({
   imports: [HttpModule],
@@ -12,6 +13,7 @@ import { PlaceDurationGateway } from './gateways/place-duration.gateway';
     PlaceGateway,
     CheckListsGateway,
     PlaceDurationGateway,
+    RouteGateway,
   ],
   controllers: [],
 })
