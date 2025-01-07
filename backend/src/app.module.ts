@@ -1,20 +1,20 @@
 import { Module } from '@nestjs/common';
 //import { AppController } from './app.controller';
-import { AuthModule } from './auth/auth.module';
-import { CurrencyModule } from './currencies/currency.module';
-import { CountryModule } from './countries/country.module';
-import { UserModule } from './users/user.module';
-import { TripModule } from './trips/trip.module';
-import { TripMemberModule } from './tripMembers/tripMember.module';
-import { CheckListModule } from './checkLists/checkList.module';
-import { ReservationModule } from './reservations/reservation.module';
-import { PlaceModule } from './places/place.module';
-import { PlaceCommentModule } from './placeComments/placeComment.module';
-import { PlaceDurationModule } from './placeDuration/placeDuration.module';
-import { RouteModule } from './routes/routes.module';
-import { UploadModule } from './upload/upload.module';
-import { ExpenseCategoryModule } from './expenseCategories/expenseCategory.module';
-import { ExpenseModule } from './expenses/expense.module';
+import { AuthModule } from './api/auth/auth.module';
+import { CurrencyModule } from './api/currencies/currency.module';
+import { CountryModule } from './api/countries/country.module';
+import { UserModule } from './api/users/user.module';
+import { TripModule } from './api/trips/trip.module';
+import { TripMemberModule } from './api/tripMembers/tripMember.module';
+import { CheckListModule } from './api/checkLists/checkList.module';
+import { ReservationModule } from './api/reservations/reservation.module';
+import { PlaceModule } from './api/places/place.module';
+import { PlaceCommentModule } from './api/placeComments/placeComment.module';
+import { PlaceDurationModule } from './api/placeDuration/placeDuration.module';
+import { RouteModule } from './api/routes/routes.module';
+import { UploadModule } from './api/upload/upload.module';
+import { ExpenseCategoryModule } from './api/expenseCategories/expenseCategory.module';
+import { ExpenseModule } from './api/expenses/expense.module';
 import { WebSocketModule } from './webSocket/websocket.module';
 
 @Module({
