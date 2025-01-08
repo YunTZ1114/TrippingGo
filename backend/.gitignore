@@ -2,3 +2,4 @@
 /dist
 /prisma/.env
 /node_modules
+/src/webSocket

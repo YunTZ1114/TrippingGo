@@ -29,7 +29,7 @@ export class TripController {
   }
 
   @Get('/:tripId')
-  @RequiredPermission(PermissionsText.VIEWER)
+  @RequiredPermission(PermissionsText.PENDING)
   async getTripDetail(@Param('tripId') tripId: number) {
     const trip = await this.tripService.getTrip(tripId);
     const tripMembers = await this.tripMemberService.getTripMembers(tripId);
